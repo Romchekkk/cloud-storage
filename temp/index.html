@@ -12,7 +12,7 @@
         <script src="userFunction.js"></script>
         <script>
             function search(){
-                document.getElementById("usersList").innerHTML = document.getElementById("usersList").innerHTML+'a';
+                document.getElementById("window").innerHTML = document.getElementById("text").value;
             }
         </script>
     </head>
@@ -27,12 +27,12 @@
                 </tr>
             </tbody>
         </table>
-
         <table id="main">
             <tbody>
                 <tr>
                     <!--Таблица с окном файловой системы-->
                     <td>
+						
                         <table id="window">
                             <tbody>
                                 <tr>
@@ -47,11 +47,18 @@
                             <tbody>
                                 <tr>
                                     <td>
-                                        <input type="text" onkeyup="search()">
+                                        <input id="text" type="text" onkeyup="search()" />
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td id="usersList"></td>
+                                    <td id="usersList">
+										<ul>
+											<li>SosiskaKiller</li>
+											<li>Bomjik321</li>
+											<li>Kapusta123</li>
+											<li>TpycbI</li>
+										</ul>
+									</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -59,7 +66,6 @@
                 </tr>
             </tbody>
         </table>
-
 
     </body>
 
