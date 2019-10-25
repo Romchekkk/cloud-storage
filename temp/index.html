@@ -12,7 +12,7 @@
         <script src="userFunction.js"></script>
         <script>
             function search(){
-                document.getElementById("window").innerHTML = document.getElementById("text").value;
+                document.getElementById("window-bottom").innerHTML = document.getElementById("text").value;
             }
         </script>
     </head>
@@ -23,7 +23,10 @@
             <tbody>
                 <tr>
                     <td>Cloud storage by Romchekkk, Knya and SosiskaKiller</td>
-                    <td>Добро пожаловать, onetwoz1</td>
+                    <td>
+                        Добро пожаловать, onetwoz1<br />
+                        <input id="logout" type="button" value="Выйти" />
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -32,11 +35,40 @@
                 <tr>
                     <!--Таблица с окном файловой системы-->
                     <td>
-						
                         <table id="window">
                             <tbody>
                                 <tr>
-                                    <td></td>
+                                    <td>
+                                        <table id="window-top">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Доступно места: 890 МБ</td>
+                                                    <td><input type="button" value="Создать директорию" /></td>
+                                                    <td><input type="button" value="Загрузить файл" /></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td id="window-bottom">
+                                        <div class="directory">
+                                            <div class="hide">
+                                                <input class="changeMod" type="button" value="&nbsp;">
+                                                <input class="download" type="button" value="&nbsp;">
+                                                <input class="delete" type="button" value="&nbsp;">
+                                            </div>
+                                            <img src="dir.png" />Папка
+                                        </div>
+                                        <div class="file">
+                                            <div class="hide">
+                                                <input class="changeMod" type="button" value="&nbsp;">
+                                                <input class="download" type="button" value="&nbsp;">
+                                                <input class="delete" type="button" value="&nbsp;">
+                                            </div>
+                                            <img src="file.png" />Картинка
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -51,14 +83,14 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td id="usersList">
-										<ul>
-											<li>SosiskaKiller</li>
-											<li>Bomjik321</li>
-											<li>Kapusta123</li>
-											<li>TpycbI</li>
+                                    <td>
+										<ul id="usersList">
+											<li class="open">SosiskaKiller</li>
+											<li class="close">Bomjik321</li>
+											<li class="open">Kapusta123</li>
+											<li class="open">TpycbI</li>
 										</ul>
-									</td>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
