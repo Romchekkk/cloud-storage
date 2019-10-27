@@ -128,15 +128,3 @@ function changeMod($path, $newMod){
     // Изменение прав доступа
     return true;
 }
-
-/**
- * Generates new window, when user use one of the functions from this file
- *
- * @param [string] $path
- * @return string
- */
-function newWindow($path){
-    $newWindow = "";
-    // Генерация нового окна
-    return $newWindow;
-}
