@@ -1,0 +1,54 @@
+*{padding: 0px; text-align: center; margin: 0px;}
+
+html{height: 100%;}
+body{height: 100%;}
+input[type="button"]{border-radius: 5px; cursor: pointer;  text-align: center; padding: 0px 5px;}
+input[type="submit"]{border-radius: 5px; cursor: pointer;  text-align: center; padding: 0px 5px;}
+img{width: 100px; height: 100px;}
+
+#header{width: 100%; height: 10%; background-color: #8e898a; font-size: 20px;}
+#header>tbody>tr>td:first-child{width: 50%; text-align: left; padding-left: 20px;}
+#header>tbody>tr>td:last-child{width: 50%; position: relative; text-align: right; padding-right: 20px;}
+#header>tbody>tr>td:last-child>form{position: absolute; right: 30px; top: 40%;}
+
+
+#main{width: 100%; height: 90%;}
+#main>tbody>tr>td:first-child{width: 80%;}
+#main>tbody>tr>td:last-child{width: 20%;}
+
+
+#window{width: 100%; height: 100%;}
+#window-top{width: 100%; background: #707070; height: 50px;}
+#window-top>tbody>tr>td:first-child{text-align: left; width: 50%; font-size: 25px; padding-left: 10px;}
+#window-top>tbody>tr>td:nth-child(2){text-align: center; width: 25%;}
+#window-top>tbody>tr>td:nth-child(2)>input{height: 30px; font-size: 20px;}
+#window-top>tbody>tr>td:nth-child(3){text-align: center; width: 25%;}
+#window-top>tbody>tr>td:nth-child(3)>input{height: 30px; font-size: 20px;}
+
+#window-bottom{height: 100%; border: 1px solid black; vertical-align: top;}
+.directory{width: 100px; height: 100px; padding: 50px; float: left; position: relative;}
+.file{width: 100px; height: 100px; padding: 50px; float: left; position: relative;}
+.hide{display: none;; position: absolute; top: 20px; right: 0px;}
+div:hover .hide{display: block;}
+
+.changeMod{background-image: url("changeMod.png"); background-size: 100%; border-radius: 10px; width: 20px;}
+.download{background-image: url("download.png"); background-size: 100%; border-radius: 10px; width: 20px;}
+.delete{background-image: url("delete.png"); background-size: 100%;  width: 20px;}
+
+#users{height: 100%; width: 100%; background: #dadada; border-spacing: 10px;}
+#users>tbody>tr:first-child{height: 30px;}
+#users>tbody>tr:first-child input{width: 80%; height: 30px;}
+#users>tbody>tr:nth-child(2)>td{height: 90%; position: relative; border: 1px solid black; background: white;}
+#usersList{position: absolute; top: 0px;}
+#usersList>li{text-align: left; padding: 10px 0px 0px 10px; font-size: 30px; list-style-type: none;}
+
+.open{color: green;}
+.close{color: red;}
+
+#regForm{border: 1px solid black; border-radius: 10px; margin-left:40%; margin-right: 40%; height:200px; background-color: gray;}
+#regForm p{margin: 5px 0px;}
+#loginForm{border: 1px solid black; border-radius: 10px; margin-left:40%; margin-right: 40%; height:160px; background-color: gray;}
+#loginForm p{margin: 5px 0px;}
+.reglog{margin: 5px 0px; width: 80%; padding: 5px; border: 1px solid black; border-radius: 5px;}
+#regForm>input[type="submit"]{margin: 5px 0px; width: 83%; padding: 5px;}
+#loginForm>input[type="submit"]{margin: 5px 0px; width: 83%; padding: 5px;}
