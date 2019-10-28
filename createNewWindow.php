@@ -44,5 +44,5 @@ function newWindow($path){
             }
         }
     }
-    print $htmldir.$htmlfile;
+    return $htmldir.$htmlfile;
 }
