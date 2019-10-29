@@ -1,7 +1,6 @@
 <?php
 
 require_once("createNewWindow.php");
-
 session_start();
 
 
@@ -164,7 +163,7 @@ else{
     asort($usersArr);
     $usernameHTML = $_SESSION['username'];
     $menuHTML = "<td>Доступно места: ".$_SESSION['availableSpace']."</td>
-    <td><input type=\"button\" value=\"Создать директорию\" /></td>
+    <td><input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" /></td>
     <td><input type=\"button\" value=\"Загрузить файл\" /></td>";
     $windowHTML = newWindow($_SESSION['path']);
 

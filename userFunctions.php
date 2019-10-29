@@ -1,8 +1,8 @@
 <?php
 
-require_once "../JsHttpRequest/JsHttpRequest.php";
+require_once "JsHttpRequest/JsHttpRequest.php";
 require_once "checkAccessRights.php";
-
+require_once "createNewWindow.php";
 session_start();
 
 $js = new JsHttpRequest("utf-8");
@@ -22,21 +22,24 @@ switch($action){
         }
         break;
     case "createDirectory":
-        if ($action($dirName, $path)){
-            exit();
-        }
-        break;
     case "deleteDirectory":
-    case "deleteFile":
+        $action($dirName, $path);
+        break;
+    case "deleteFile":  
     case "downloadFile":
     case "uploadFile":
         if ($action($path)){
             exit();
         }
         break;
+    case "changeDirectory":
+        $action($dirName);
+    break;
     default:
         exit();
 }
+
+$path = $_SESSION['path'];
 
 global $_RESULT;
 $_RESULT = array(
@@ -51,10 +54,12 @@ $_RESULT = array(
  * @return bool
  */
 function createDirectory($dirName, $path){
-    if (!checkAccessRights($path, $_SESSION['user'])){
-        return false;
-    }
-    // Создание директории
+    // if (!checkAccessRights($path, $_SESSION['user'])){
+    //     return false;
+    // }
+    mkdir($path.'/'.$dirName);
+
+
     return true;
 }
 
@@ -64,11 +69,11 @@ function createDirectory($dirName, $path){
  * @param [string] $path
  * @return bool
  */
-function deleteDirectory($path){
-    if (!checkAccessRights($path, $_SESSION['user'])){
-        return false;
-    }
-    // Удаление директории
+function deleteDirectory($dirName,$path){
+    // if (!checkAccessRights($path, $_SESSION['user'])){
+    //     return false;
+    // }
+    rmdir($path.'/'.$dirName);    // Удаление директории
     return true;
 }
 
@@ -126,5 +131,13 @@ function changeMod($path, $newMod){
         return false;
     }
     // Изменение прав доступа
+    return true;
+}
+
+function changeDirectory($dirName){
+    // if (!checkAccessRights($path, $_SESSION['user'])){
+    //     return false;
+    // }
+        $_SESSION['path'] .= '/'.$dirName;
     return true;
 }
