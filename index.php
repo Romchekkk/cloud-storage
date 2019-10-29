@@ -14,6 +14,7 @@ foreach(array('action', 'username', 'email', 'password') as $parameterName){
 if ($action && $action == "Выйти"){
     session_destroy();
     $_SESSION = array();
+    setcookie("cloudStorage", "", time()-3600);
     header("Location: ".$_SERVER["PHP_SELF"]);
     die();
 }
@@ -64,16 +65,18 @@ if ($action && $action == "Зарегистрироваться" && $username){
             die();
         }
 
+        $secretKey = uniqid();
+        $password .= $secretKey;
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $currentDate = time();
-        $insert = "INSERT INTO `users`(`username`, `email`, `password`, `last_login_datetime`) VALUES ('$username', '$email', '$passwordHash', '$currentDate')";
+        $insert = "INSERT INTO `users`(`username`, `email`, `password`, `secretkey`) VALUES ('$username', '$email', '$passwordHash', '$secretKey')";
         mysqli_query($mysql, $insert);
         mysqli_close($mysql);
         $_SESSION['username'] = $username;
         $_SESSION['path'] = "localStorage/".$username;
         $_SESSION['availableSpace'] = "104857600 Байт";
         mkdir($_SESSION['path']);
-        //setcookie("cloudStorage", $email.':'.password_hash($secretKey.":".$_SERVER['REMOTE_ADDR'].":".$currentDate, PASSWORD_DEFAULT), time()+60*60*24);
+        $forcoockie = $secretKey.$_SERVER['REMOTE_ADDR'];
+        setcookie("cloudStorage", $email.':'.password_hash($forcoockie, PASSWORD_DEFAULT), time()+60*60*24);
         header("Location: ".$_SERVER["PHP_SELF"]);
         die();
     }
@@ -90,15 +93,19 @@ if ($action && $action == "Войти"){
     $result = mysqli_query($mysql, "SELECT * FROM `users` WHERE email='$email'");
     if($result){
         $userData = mysqli_fetch_array($result);
-        if (password_verify($password, $userData["password"])){
-            $currentDate = time();
-            $update = mysqli_query($mysql, "UPDATE `users` SET `last_login_datetime`='$currentDate' WHERE `email`='$email'");
+        $passwordCheck = $password.$userData['secretkey'];
+        if (password_verify($passwordCheck, $userData["password"])){
+            $secretKey = uniqid();
+            $newPassword = $password.$secretKey;
+            $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+            $update = mysqli_query($mysql, "UPDATE `users` SET `password`='$newPasswordHash', `secretKey`='$secretKey'  WHERE `email`='$email'");
             mysqli_close($mysql);
             if ($update){
                 $_SESSION['username'] = $userData["username"];
                 $_SESSION['path'] = "localStorage/".$_SESSION["username"];
                 $_SESSION['availableSpace'] = $userData["availablespace"]." Байт";
-                //setcookie("cloudStorage", $email.':'.password_hash($secretKey.":".$_SERVER['REMOTE_ADDR'].":".$currentDate, PASSWORD_DEFAULT), time()+60*60*24);
+                $forcoockie = $secretKey.$_SERVER['REMOTE_ADDR'];
+                setcookie("cloudStorage", $email.':'.password_hash($forcoockie, PASSWORD_DEFAULT), time()+60*60*24);
                 header ("Location: ".$_SERVER["PHP_SELF"]);
                 die();
             }
@@ -115,7 +122,7 @@ if ($action && $action == "Войти"){
     }
 }
 
-if(!isset($_SESSION['username'])){
+if(!checkCoockie()){
     $html = file_get_contents("temp/reg.txt");
     $formHTML = "<div id=\"regForm\">
     <form action=\"\" method=\"post\">
@@ -134,7 +141,6 @@ if(!isset($_SESSION['username'])){
     $html = preg_replace("/formHTML/uis", $formHTML, $html);
 }
 else{
-    print_r($_SESSION);
     $usersArr = array();
     $ini = parse_ini_file("mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
@@ -156,7 +162,7 @@ else{
     }
     mysqli_close($mysql);
     asort($usersArr);
-    $loginHTML = "Добро пожаловать, ".$_SESSION['username']."<form method=\"post\"><input type=\"submit\" name=\"action\" value=\"Выйти\" /></form>";
+    $usernameHTML = $_SESSION['username'];
     $menuHTML = "<td>Доступно места: ".$_SESSION['availableSpace']."</td>
     <td><input type=\"button\" value=\"Создать директорию\" /></td>
     <td><input type=\"button\" value=\"Загрузить файл\" /></td>";
@@ -168,9 +174,40 @@ else{
     }
 
     $html = file_get_contents("temp/html.txt");
-    foreach(array('loginHTML', 'menuHTML', 'windowHTML', 'usersHTML') as $value){
+    foreach(array('usernameHTML', 'menuHTML', 'windowHTML', 'usersHTML') as $value){
         $html = preg_replace("/$value/uis", $$value, $html);
     }    
 }
 
 print($html);
+
+function checkCoockie(){
+    if (isset($_COOKIE["cloudStorage"])){
+        $coockieArr = explode(":",$_COOKIE["cloudStorage"]);
+        $email = $coockieArr[0];
+        $ini = parse_ini_file("mysql.ini");
+        $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+        if(!$mysql){
+            return checkCoockie();
+        }
+        $secretKey = "";
+        $result = mysqli_query($mysql, "SELECT * FROM `users` WHERE email='$email'");
+        if($result){
+            $userData = mysqli_fetch_array($result);
+            $secretKey = $userData['secretkey'];
+            mysqli_close($mysql);
+        }
+        else{
+            return false;
+        }
+        $coockieKeyHash = $coockieArr[1];
+        $key = $secretKey.$_SERVER["REMOTE_ADDR"];
+        if (password_verify($key, $coockieKeyHash)){
+            return true;
+        } 
+    }
+    else{
+        return false;
+    }
+    return false;
+}
