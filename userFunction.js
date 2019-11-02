@@ -1,4 +1,3 @@
-
 function createDirectory(){
     JsHttpRequest.query(
         'userFunctions.php',
@@ -6,7 +5,7 @@ function createDirectory(){
             "action": 'createDirectory',
             "dirName": document.getElementById("dirName").value
         },
-        function(result, error){
+        function(result){
             document.getElementById("window-bottom").innerHTML = result.window;
         },
         true
@@ -20,7 +19,7 @@ function deleteDirectory(dirName){
             "action": 'deleteDirectory',
             "dirName": dirName
         },
-        function(result, error){
+        function(result){
             document.getElementById("window-bottom").innerHTML = result.window;
         },
         true
@@ -34,7 +33,50 @@ function changeDirectory(dirName){
             "action": 'changeDirectory',
             "dirName": dirName
         },
-        function(result, error){
+        function(result){
+            document.getElementById("window-bottom").innerHTML = result.window;
+        },
+        true
+    );
+}
+
+function goBack(){
+    JsHttpRequest.query(
+        'userFunctions.php',
+        {
+            "action": 'goBack'
+        },
+        function(result){
+            document.getElementById("window-bottom").innerHTML = result.window;
+        },
+        true
+    );
+}
+
+function uploadFile(file){
+    JsHttpRequest.query(
+        'userFunctions.php',
+        {
+            "action": 'uploadFile',
+            "file": file
+
+        },
+        function(result){
+            document.getElementById("window-bottom").innerHTML = result.window;
+        },
+        true
+    );
+}
+
+function deleteFile(fileName){
+    JsHttpRequest.query(
+        'userFunctions.php',
+        {
+            "action": 'deleteFile',
+            "fileName": fileName
+
+        },
+        function(result){
             document.getElementById("window-bottom").innerHTML = result.window;
         },
         true

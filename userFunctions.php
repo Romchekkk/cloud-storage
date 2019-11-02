@@ -7,7 +7,7 @@ session_start();
 
 $js = new JsHttpRequest("utf-8");
 
-foreach(array('action', 'newMod', 'dirName') as $parameterName){
+foreach(array('action', 'newMod', 'dirName', 'fileName') as $parameterName){
     $$parameterName = isset($_REQUEST[$parameterName])
     ? trim($_REQUEST[$parameterName])
     : "";
@@ -17,20 +17,19 @@ $path = $_SESSION['path'];
 
 switch($action){
     case "changeMod":
-        if ($action($path, $newMod)){
-            exit();
-        }
+        $action($path, $newMod);
         break;
     case "createDirectory":
     case "deleteDirectory":
-        $action($dirName, $path);
+        $action($path, $dirName);
         break;
-    case "deleteFile":  
+    case "deleteFile":
+        $action($path, $fileName);
+        break;
+    case "uploadFile":  
     case "downloadFile":
-    case "uploadFile":
-        if ($action($path)){
-            exit();
-        }
+    case "goBack":
+        $action($path);
         break;
     case "changeDirectory":
         $action($dirName);
@@ -46,90 +45,54 @@ $_RESULT = array(
     "window" => newWindow($path)
 );
 
-/**
- * Create directory on storage
- *
- * @param [string] $dirName
- * @param [string] $path
- * @return bool
- */
-function createDirectory($dirName, $path){
+function createDirectory($path, $dirName){
     // if (!checkAccessRights($path, $_SESSION['user'])){
     //     return false;
     // }
     mkdir($path.'/'.$dirName);
-
-
     return true;
 }
 
-/**
- * Delete directory on storage
- *
- * @param [string] $path
- * @return bool
- */
-function deleteDirectory($dirName,$path){
+function deleteDirectory($path,$dirName){
     // if (!checkAccessRights($path, $_SESSION['user'])){
     //     return false;
     // }
-    rmdir($path.'/'.$dirName);    // Удаление директории
+    rmdir($path.'/'.$dirName);
     return true;
 }
 
-/**
- * Upload file on storage
- *
- * @param [string] $path
- * @return bool
- */
 function uploadFile($path){
-    if (!checkAccessRights($path, $_SESSION['user'])){
+    // if (!checkAccessRights($path, $_SESSION['user'])){
+    //     return false;
+    // }
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $path."/".$_FILES['file']['name'])) {
+        return true;
+    }
+    else{
         return false;
     }
-    // Загрузка файла
-    return true;
 }
 
-/**
- * Download file from storage
- *
- * @param [string] $path
- * @return bool
- */
 function downloadFile($path){
-    if (!checkAccessRights($path, $_SESSION['user'])){
-        return false;
-    }
+    // if (!checkAccessRights($path, $_SESSION['user'])){
+    //     return false;
+    // }
     // Скачивание файла
     return true;
 }
 
-/**
- * Delete file from storage
- *
- * @param [string] $path
- * @return bool
- */
-function deleteFile($path){
-    if (!checkAccessRights($path, $_SESSION['user'])){
-        return false;
-    }
-    // Удаление файла
+function deleteFile($path, $fileName){
+    // if (!checkAccessRights($path, $_SESSION['user'])){
+    //     return false;
+    // }
+    unlink($path."/".$fileName);
     return true;
 }
 
-/**
- * Change access rights on file or directory on storage
- *
- * @param [string] $path
- * @param [string] $newMod
- * @return void
- */
 function changeMod($path, $newMod){
-    if (!checkAccessRights($path, $_SESSION['user'])){
-        return false;
-    }
+    // if (!checkAccessRights($path, $_SESSION['user'])){
+    //     return false;
+    // }
     // Изменение прав доступа
     return true;
 }
@@ -138,6 +101,15 @@ function changeDirectory($dirName){
     // if (!checkAccessRights($path, $_SESSION['user'])){
     //     return false;
     // }
-        $_SESSION['path'] .= '/'.$dirName;
+    $_SESSION['path'] .= '/'.$dirName;
+    return true;
+}
+
+function goBack($path){
+    if (preg_match_all("/\//uis", $path) == 1){
+        return false;
+    }
+    preg_match("/(?<newPath>.*)\/.*?$/uis", $path, $arr);
+    $_SESSION['path'] = $arr['newPath'];
     return true;
 }

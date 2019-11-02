@@ -20,9 +20,8 @@ if ($action && $action == "Выйти"){
 
 if ($action && $action == "Зарегистрироваться" && $username){
     if (preg_match("/^[a-z0-9]{3,25}$/uis", $username)){
-        $ini = parse_ini_file("mysql.ini");
+        $ini = parse_ini_file("database/mysql.ini");
         $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-
         if(!$mysql){
             print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
             header("Location: ".$_SERVER["PHP_SELF"]);
@@ -63,7 +62,6 @@ if ($action && $action == "Зарегистрироваться" && $username){
             header("Location: ".$_SERVER["PHP_SELF"]);
             die();
         }
-
         $secretKey = uniqid();
         $password .= $secretKey;
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -82,7 +80,7 @@ if ($action && $action == "Зарегистрироваться" && $username){
 }
 
 if ($action && $action == "Войти"){
-    $ini = parse_ini_file("mysql.ini");
+    $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
     if(!$mysql){
         print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
@@ -122,7 +120,7 @@ if ($action && $action == "Войти"){
 }
 
 if(!checkCoockie()){
-    $html = file_get_contents("temp/reg.txt");
+    $html = file_get_contents("html_patterns/reg.txt");
     $formHTML = "<div id=\"regForm\">
     <form action=\"\" method=\"post\">
         <p>Регистрация</p>
@@ -141,7 +139,7 @@ if(!checkCoockie()){
 }
 else{
     $usersArr = array();
-    $ini = parse_ini_file("mysql.ini");
+    $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
     if(!$mysql){
         print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
@@ -162,9 +160,9 @@ else{
     mysqli_close($mysql);
     asort($usersArr);
     $usernameHTML = $_SESSION['username'];
-    $menuHTML = "<td>Доступно места: ".$_SESSION['availableSpace']."</td>
+    $menuHTML = "<td>Доступно места: ".$_SESSION['availableSpace']."<br /><input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /></td>
     <td><input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" /></td>
-    <td><input type=\"button\" value=\"Загрузить файл\" /></td>";
+    <td><form method=\"post\" enctype=\"multipart/form-data\"><input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file)\" /></form></td>";
     $windowHTML = newWindow($_SESSION['path']);
 
     $usersHTML = "";
@@ -172,10 +170,10 @@ else{
         $usersHTML .= "<li class=\"close\">$user</li>";
     }
 
-    $html = file_get_contents("temp/html.txt");
+    $html = file_get_contents("html_patterns/html.txt");
     foreach(array('usernameHTML', 'menuHTML', 'windowHTML', 'usersHTML') as $value){
         $html = preg_replace("/$value/uis", $$value, $html);
-    }    
+    }
 }
 
 print($html);
@@ -184,7 +182,7 @@ function checkCoockie(){
     if (isset($_COOKIE["cloudStorage"])){
         $coockieArr = explode(":",$_COOKIE["cloudStorage"]);
         $email = $coockieArr[0];
-        $ini = parse_ini_file("mysql.ini");
+        $ini = parse_ini_file("database/mysql.ini");
         $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
         if(!$mysql){
             return checkCoockie();

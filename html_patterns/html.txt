@@ -4,9 +4,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Cloud storage</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
-        <link rel="icon" type="image/x-icon" href="favicon.ico">
-        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+        <link rel="stylesheet" type="text/css" href="html_patterns/style.css">
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+        <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
         <script src="JsHttpRequest/JsHttpRequest.js"></script>
         <script src="userFunction.js"></script>
         <script>
