@@ -160,9 +160,9 @@ else{
     mysqli_close($mysql);
     asort($usersArr);
     $usernameHTML = $_SESSION['username'];
-    $menuHTML = "<td>Доступно места: ".$_SESSION['availableSpace']."<br /><input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /></td>
+    $menuHTML = "<td>Доступно места: <span id=\"availableSpace\">".$_SESSION['availableSpace']."</span><br /><input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /></td>
     <td><input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" /></td>
-    <td><form method=\"post\" enctype=\"multipart/form-data\"><input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file)\" /></form></td>";
+    <td><form method=\"post\" enctype=\"multipart/form-data\"><input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file,'$usernameHTML')\" /></form></td>";
     $windowHTML = newWindow($_SESSION['path']);
 
     $usersHTML = "";

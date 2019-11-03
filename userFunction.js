@@ -53,15 +53,16 @@ function goBack(){
     );
 }
 
-function uploadFile(file){
+function uploadFile(file, username){
     JsHttpRequest.query(
         'userFunctions.php',
         {
             "action": 'uploadFile',
-            "file": file
-
+            "file": file,
+            "username": username
         },
         function(result){
+            document.getElementById("availableSpace").innerHTML = result.space;
             document.getElementById("window-bottom").innerHTML = result.window;
         },
         true
@@ -73,10 +74,10 @@ function deleteFile(fileName){
         'userFunctions.php',
         {
             "action": 'deleteFile',
-            "fileName": fileName
-
+            "fileName": fileName,
         },
         function(result){
+            document.getElementById("availableSpace").innerHTML = result.space;
             document.getElementById("window-bottom").innerHTML = result.window;
         },
         true

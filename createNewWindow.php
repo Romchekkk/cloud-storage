@@ -12,7 +12,6 @@ function newWindow($path){
             {
                 $htmldir .= "<div class=\"hide\">
                                 <input class=\"changeMod\" type=\"button\" value=\"&nbsp;\" />
-                                <input class=\"download\" type=\"button\" value=\"&nbsp;\" />
                                 <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                              </div>
                             <img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />$nameFile
