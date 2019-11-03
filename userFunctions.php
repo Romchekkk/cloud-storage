@@ -28,6 +28,8 @@ switch($action){
         break;
     case "uploadFile":  
     case "downloadFile":
+        $action($path, $fileName);
+        break;
     case "goBack":
         $action($path);
         break;
@@ -73,12 +75,11 @@ function uploadFile($path){
     }
 }
 
-function downloadFile($path){
+function downloadFile($path,$fileName){
     // if (!checkAccessRights($path, $_SESSION['user'])){
     //     return false;
     // }
-    // Скачивание файла
-    return true;
+        return true;
 }
 
 function deleteFile($path, $fileName){

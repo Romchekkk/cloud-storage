@@ -82,3 +82,24 @@ function deleteFile(fileName){
         true
     );
 }
+
+function downloadFile(path, fileName){
+    
+    JsHttpRequest.query(
+        'userFunctions.php',
+        {
+            "action": 'downloadFile',
+            "fileName": fileName
+
+        },
+        function(result){
+            document.getElementById("window-bottom").innerHTML = result.window;
+        },
+        true
+    );
+
+    var link = document.createElement('a');
+	link.setAttribute('href', path + '/' + fileName);
+	link.setAttribute('download', fileName);
+	link.click();
+}
