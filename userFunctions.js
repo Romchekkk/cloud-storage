@@ -20,6 +20,7 @@ function deleteDirectory(dirName){
             "dirName": dirName
         },
         function(result){
+            document.getElementById("availableSpace").innerHTML = result.space;
             document.getElementById("window-bottom").innerHTML = result.window;
         },
         true
@@ -84,7 +85,7 @@ function deleteFile(fileName){
     );
 }
 
-function downloadFile(path, fileName){
+function downloadFile(fileName){
     
     JsHttpRequest.query(
         'userFunctions.php',
@@ -94,13 +95,11 @@ function downloadFile(path, fileName){
 
         },
         function(result){
-            document.getElementById("window-bottom").innerHTML = result.window;
+            var link = document.createElement('a');
+            link.setAttribute('href', result.href);
+            link.setAttribute('download', fileName);
+            link.click();
         },
         true
     );
-
-    var link = document.createElement('a');
-	link.setAttribute('href', path + '/' + fileName);
-	link.setAttribute('download', fileName);
-	link.click();
 }

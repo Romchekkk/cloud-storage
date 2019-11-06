@@ -70,7 +70,7 @@ if ($action && $action == "Зарегистрироваться" && $username){
         mysqli_close($mysql);
         $_SESSION['username'] = $username;
         $_SESSION['path'] = "localStorage/".$username;
-        $_SESSION['availableSpace'] = "104857600 Байт";
+        $_SESSION['availableSpace'] = 104857600;
         mkdir($_SESSION['path']);
         $forcoockie = $secretKey.$_SERVER['REMOTE_ADDR'];
         setcookie("cloudStorage", $email.':'.password_hash($forcoockie, PASSWORD_DEFAULT), time()+60*60*24);
@@ -100,7 +100,7 @@ if ($action && $action == "Войти"){
             if ($update){
                 $_SESSION['username'] = $userData["username"];
                 $_SESSION['path'] = "localStorage/".$_SESSION["username"];
-                $_SESSION['availableSpace'] = $userData["availablespace"]." Байт";
+                $_SESSION['availableSpace'] = $userData["availablespace"];
                 $forcoockie = $secretKey.$_SERVER['REMOTE_ADDR'];
                 setcookie("cloudStorage", $email.':'.password_hash($forcoockie, PASSWORD_DEFAULT), time()+60*60*24);
                 header ("Location: ".$_SERVER["PHP_SELF"]);
@@ -160,7 +160,7 @@ else{
     mysqli_close($mysql);
     asort($usersArr);
     $usernameHTML = $_SESSION['username'];
-    $menuHTML = "<td>Доступно места: <span id=\"availableSpace\">".$_SESSION['availableSpace']."</span><br /><input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /></td>
+    $menuHTML = "<td>Доступно места: <span id=\"availableSpace\">".$_SESSION['availableSpace']."</span> Байт<br /><input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /></td>
     <td><input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" /></td>
     <td><form method=\"post\" enctype=\"multipart/form-data\"><input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file,'$usernameHTML')\" /></form></td>";
     $windowHTML = newWindow($_SESSION['path']);
@@ -192,19 +192,30 @@ function checkCoockie(){
         if($result){
             $userData = mysqli_fetch_array($result);
             $secretKey = $userData['secretkey'];
-            mysqli_close($mysql);
         }
         else{
+            mysqli_close($mysql);
             return false;
         }
         $coockieKeyHash = $coockieArr[1];
         $key = $secretKey.$_SERVER["REMOTE_ADDR"];
         if (password_verify($key, $coockieKeyHash)){
+            $result = mysqli_query($mysql, "SELECT * FROM `users` WHERE email='$email'");
+            if($result){
+                $userData = mysqli_fetch_array($result);
+                $_SESSION['username'] = $userData["username"];
+                $_SESSION['path'] = "localStorage/".$_SESSION["username"];
+                $_SESSION['availableSpace'] = $userData["availablespace"];
+                mysqli_close($mysql);
+            }
+            else{
+                mysqli_close($mysql);
+                return checkCoockie();
+            }
             return true;
-        } 
+        }
     }
     else{
         return false;
     }
-    return false;
 }

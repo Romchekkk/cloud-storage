@@ -30,7 +30,7 @@ function newWindow($path){
             {
                 $htmlfile .= "<div class=\"hide\">
                                 <input class=\"changeMod\" type=\"button\" value=\"&nbsp;\" />
-                                <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('$path','".preg_replace("/'/uis", "\'", $nameFile)."')\" />
+                                <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                                 <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                               </div>
                             <img src=\"images/file.png\" />$nameFile
