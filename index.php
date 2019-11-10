@@ -1,6 +1,7 @@
 <?php
 
 require_once("createNewWindow.php");
+require_once("dataBaseFunctions.php");
 session_start();
 
 
@@ -18,59 +19,42 @@ if ($action && $action == "Выйти"){
     die();
 }
 
-if ($action && $action == "Зарегистрироваться" && $username){
+if ($action && $action == "Зарегистрироваться" && $username && $email && $password){
     if (preg_match("/^[a-z0-9]{3,25}$/uis", $username)){
         $ini = parse_ini_file("database/mysql.ini");
         $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
         if(!$mysql){
             print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
-            header("Location: ".$_SERVER["PHP_SELF"]);
             die();
         }
-        if($stmt = mysqli_prepare($mysql, "SELECT `username` from `users`")){
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_bind_result($stmt, $user);
-            while (mysqli_stmt_fetch($stmt)){
-                if ($user == $username){
-                    $_SESSION['error'] = "Имя пользователя занято!";
-                    header("Location: ".$_SERVER["PHP_SELF"]);
-                    die();
-                }
-            }
-            mysqli_stmt_close($stmt);
-        }
-        else{
+        $usersArr = getUsers($mysql);
+        if(count($usersArr) == 0){
             print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
-            header("Location: ".$_SERVER["PHP_SELF"]);
             die();
         }
-
-        if($stmt = mysqli_prepare($mysql, "SELECT `email` from `users`")){
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_bind_result($stmt, $user);
-            while (mysqli_stmt_fetch($stmt)){
-                if ($user == $email){
-                    $_SESSION['error'] = "Логин занят!";
-                    header("Location: ".$_SERVER["PHP_SELF"]);
-                    die();
-                }
+        foreach ($usersArr as $user) { 
+            if ($user['username'] == $username){
+                $_SESSION['error'] = "Имя пользователя занято!";
+                header("Location: ".$_SERVER["PHP_SELF"]);
+                die();
             }
-            mysqli_stmt_close($stmt);
-        }
-        else{
-            print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
-            header("Location: ".$_SERVER["PHP_SELF"]);
-            die();
+            elseif ($user['email'] == $email){
+                $_SESSION['error'] = "Такая почта уже зарегистрирована!";
+                header("Location: ".$_SERVER["PHP_SELF"]);
+                die();
+            }
         }
         $secretKey = uniqid();
         $password .= $secretKey;
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $insert = "INSERT INTO `users`(`username`, `email`, `password`, `secretkey`) VALUES ('$username', '$email', '$passwordHash', '$secretKey')";
-        mysqli_query($mysql, $insert);
+        if (!mysqli_query($mysql, "INSERT INTO `users`(`username`, `email`, `password`, `secretkey`) VALUES ('$username', '$email', '$passwordHash', '$secretKey')")){
+            print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
+            die();
+        }
         mysqli_close($mysql);
         $_SESSION['username'] = $username;
         $_SESSION['path'] = "localStorage/".$username;
-        $_SESSION['availableSpace'] = 104857600;
+        $_SESSION['availablespace'] = 104857600;
         mkdir($_SESSION['path']);
         $forcoockie = $secretKey.$_SERVER['REMOTE_ADDR'];
         setcookie("cloudStorage", $email.':'.password_hash($forcoockie, PASSWORD_DEFAULT), time()+60*60*24);
@@ -79,43 +63,40 @@ if ($action && $action == "Зарегистрироваться" && $username){
     }
 }
 
-if ($action && $action == "Войти"){
+if ($action && $action == "Войти" && $email && $password){
     $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
     if(!$mysql){
         print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
-        header("Location: ".$_SERVER["PHP_SELF"]);
         die();
     }
-    $result = mysqli_query($mysql, "SELECT * FROM `users` WHERE email='$email'");
-    if($result){
-        $userData = mysqli_fetch_array($result);
-        $passwordCheck = $password.$userData['secretkey'];
-        if (password_verify($passwordCheck, $userData["password"])){
-            $secretKey = uniqid();
-            $newPassword = $password.$secretKey;
-            $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
-            $update = mysqli_query($mysql, "UPDATE `users` SET `password`='$newPasswordHash', `secretKey`='$secretKey'  WHERE `email`='$email'");
-            mysqli_close($mysql);
-            if ($update){
-                $_SESSION['username'] = $userData["username"];
-                $_SESSION['path'] = "localStorage/".$_SESSION["username"];
-                $_SESSION['availableSpace'] = $userData["availablespace"];
-                $forcoockie = $secretKey.$_SERVER['REMOTE_ADDR'];
-                setcookie("cloudStorage", $email.':'.password_hash($forcoockie, PASSWORD_DEFAULT), time()+60*60*24);
-                header ("Location: ".$_SERVER["PHP_SELF"]);
-                die();
-            }
-            else{
-                $update_error = TRUE;
-            }
+    $user = getConcreteUser($mysql, "email", $email);
+    $passwordCheck = $password.$user['secretkey'];
+    if (password_verify($passwordCheck, $user["password"])){
+        $secretKey = uniqid();
+        $newPassword = $password.$secretKey;
+        $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $update = mysqli_query($mysql, "UPDATE `users` SET `password`='$newPasswordHash', `secretKey`='$secretKey'  WHERE `email`='$email'");
+        mysqli_close($mysql);
+        if ($update){
+            $_SESSION['username'] = $user["username"];
+            $_SESSION['path'] = "localStorage/".$_SESSION["username"];
+            $_SESSION['availablespace'] = $user["availablespace"];
+            $forcoockie = $secretKey.$_SERVER['REMOTE_ADDR'];
+            setcookie("cloudStorage", $email.':'.password_hash($forcoockie, PASSWORD_DEFAULT), time()+60*60*24);
+            header ("Location: ".$_SERVER["PHP_SELF"]);
+            die();
         }
         else{
-            $error_pass = TRUE;
+            $_SESSION['error'] = "Произошла непредвиденная ошибка :(\nПопробуйте еще раз";
+            header("Location: ".$_SERVER["PHP_SELF"]);
+            die();
         }
     }
     else{
-    $error_login = TRUE;
+        $_SESSION['error'] = "Неверный логин или пароль!";
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        die();
     }
 }
 
@@ -145,29 +126,30 @@ else{
         print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
         die();
     }
-    if ($stmt = mysqli_prepare($mysql, "SELECT `username` from `users`")){
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_bind_result($stmt, $user);
-        while (mysqli_stmt_fetch($stmt)) {
-            $usersArr[] = $user;
-        }
-        mysqli_stmt_close($stmt);
-    }
-    else{
+    $usersArr = getUsers($mysql);
+    if(count($usersArr) == 0){
         print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
         die();
     }
     mysqli_close($mysql);
-    asort($usersArr);
     $usernameHTML = $_SESSION['username'];
-    $menuHTML = "<td>Доступно места: <span id=\"availableSpace\">".$_SESSION['availableSpace']."</span> Байт<br /><input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /></td>
-    <td><input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" /></td>
-    <td><form method=\"post\" enctype=\"multipart/form-data\"><input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file,'$usernameHTML')\" /></form></td>";
+    $menuHTML = "<td>
+Доступно места: <span id=\"availablespace\">".$_SESSION['availablespace']."</span> Байт<br />
+<input type=\"button\" value=\"Назад\" onclick=\"goBack()\" />
+</td>
+<td>
+    <input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" />
+</td>
+<td>
+    <form method=\"post\" enctype=\"multipart/form-data\">
+    <input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file,'$usernameHTML')\" />
+    </form>
+</td>";
     $windowHTML = newWindow($_SESSION['path']);
 
     $usersHTML = "";
     foreach($usersArr as $user){
-        $usersHTML .= "<li class=\"close\">$user</li>";
+        $usersHTML .= "<li class=\"close\">".$user["username"]."</li>";
     }
 
     $html = file_get_contents("html_patterns/html.txt");
@@ -185,13 +167,13 @@ function checkCoockie(){
         $ini = parse_ini_file("database/mysql.ini");
         $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
         if(!$mysql){
-            return checkCoockie();
+            print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
+            die();
         }
         $secretKey = "";
-        $result = mysqli_query($mysql, "SELECT * FROM `users` WHERE email='$email'");
-        if($result){
-            $userData = mysqli_fetch_array($result);
-            $secretKey = $userData['secretkey'];
+        $user = getConcreteUser($mysql, "email", $email);
+        if(count($user) != 0){
+            $secretKey = $user['secretkey'];
         }
         else{
             mysqli_close($mysql);
@@ -200,20 +182,16 @@ function checkCoockie(){
         $coockieKeyHash = $coockieArr[1];
         $key = $secretKey.$_SERVER["REMOTE_ADDR"];
         if (password_verify($key, $coockieKeyHash)){
-            $result = mysqli_query($mysql, "SELECT * FROM `users` WHERE email='$email'");
-            if($result){
-                $userData = mysqli_fetch_array($result);
-                $_SESSION['username'] = $userData["username"];
+                $_SESSION['username'] = $user["username"];
                 $_SESSION['path'] = "localStorage/".$_SESSION["username"];
-                $_SESSION['availableSpace'] = $userData["availablespace"];
+                $_SESSION['availablespace'] = $user["availablespace"];
                 mysqli_close($mysql);
-            }
-            else{
-                mysqli_close($mysql);
-                return checkCoockie();
-            }
-            return true;
         }
+        else{
+            mysqli_close($mysql);
+            return checkCoockie();
+        }
+        return true;
     }
     else{
         return false;

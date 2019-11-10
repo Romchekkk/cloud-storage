@@ -54,13 +54,12 @@ function goBack(){
     );
 }
 
-function uploadFile(file, username){
+function uploadFile(file){
     JsHttpRequest.query(
         'userFunctions.php',
         {
             "action": 'uploadFile',
-            "file": file,
-            "username": username
+            "file": file
         },
         function(result){
             document.getElementById("availableSpace").innerHTML = result.space;

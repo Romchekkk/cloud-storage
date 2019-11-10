@@ -3,12 +3,13 @@
 require_once "JsHttpRequest/JsHttpRequest.php";
 require_once "checkAccessRights.php";
 require_once "createNewWindow.php";
+require_once "dataBaseFunctions.php";
 
 session_start();
 
 $js = new JsHttpRequest("utf-8");
 
-foreach (array('action', 'newMod', 'dirName', 'fileName', 'username') as $parameterName) {
+foreach (array('action', 'newMod', 'dirName', 'fileName') as $parameterName) {
     $$parameterName = isset($_REQUEST[$parameterName])
         ? trim($_REQUEST[$parameterName])
         : "";
@@ -29,7 +30,7 @@ switch ($action) {
         $action($path, $fileName);
         break;
     case "uploadFile":
-        $action($path, $username);
+        $action($path);
         break;
     case "downloadFile":
         $action($path, $fileName);
@@ -78,7 +79,7 @@ function deleteDirectory($path, $dirName)
     return true;
 }
 
-function uploadFile($path, $username)
+function uploadFile($path)
 {
     // if (!checkAccessRights($path, $_SESSION['user'])){
     //     return false;
@@ -192,15 +193,14 @@ function removeDir($path, $mysql)
 }
 
 function newAvailableSpace($size, $sign, $username, $mysql){
-    $result = mysqli_query($mysql, "SELECT * FROM `users` WHERE username='$username'");
-    if ($result) {
-        $userData = mysqli_fetch_array($result);
+    $user = getConcreteUser($mysql, "username", $username);
+    if (count($user) != 0) {
         $availablespace = 0;
         if ($sign == "+"){
-            $availablespace = $userData['availablespace']+$size;
+            $availablespace = $user['availablespace']+$size;
         }
         else{
-            $availablespace = $userData['availablespace']-$size;
+            $availablespace = $user['availablespace']-$size;
         }
         $update = mysqli_query($mysql, "UPDATE `users` SET `availablespace`='$availablespace' WHERE `username`='$username'");
         if ($update) {
