@@ -1,8 +1,7 @@
 <?php
 
 require_once "JsHttpRequest/JsHttpRequest.php";
-require_once "checkAccessRights.php";
-require_once "createNewWindow.php";
+require_once "additionalFunctions.php";
 require_once "dataBaseFunctions.php";
 
 session_start();
@@ -234,76 +233,5 @@ function goBack($path){
         preg_match("/(?<newPath>.*)\/.*?$/uis", $path, $arr);
         $_SESSION['path'] = $arr['newPath'];
         return true;
-    }
-}
-
-function removeDir($path, $mysql){
-    foreach (glob($path . '/*') as $file) {
-        if (is_dir($file)) {
-            if (removeDir($file, $mysql)){
-                continue;
-            }
-            else{
-                return false;
-            }
-        } 
-        else {
-            $size = filesize($file);
-            if (newAvailableSpace($size, "-", $_SESSION['username'], $mysql)) {
-                if (removeFromAccessrights($mysql, $file)){
-                    if (unlink($file)) {
-                        continue;
-                    }
-                    else{
-                        addToAccessrights($mysql, $file);
-                        newAvailableSpace($size, "+", $_SESSION['username'], $mysql);
-                        return false;
-                    }
-                }
-                else{
-                    newAvailableSpace($size, "+", $_SESSION['username'], $mysql);
-                    return false;
-                }
-            }
-            else{
-                return false;
-            }
-        }
-    }
-    if (removeFromAccessrights($mysql, $path)){
-        if (rmdir($path)){
-            return true;
-        }
-        else{
-            addToAccessrights($mysql, $path);
-            return false;
-        }
-    }
-    else{
-        return false;
-    }
-}
-
-function newAvailableSpace($size, $sign, $username, $mysql){
-    $user = getConcreteUser($mysql, "username", $username);
-    if (count($user) != 0) {
-        $availablespace = 0;
-        if ($sign == "+"){
-            $availablespace = $user['availablespace']+$size;
-        }
-        else{
-            $availablespace = $user['availablespace']-$size;
-        }
-        $update = mysqli_query($mysql, "UPDATE `users` SET `availablespace`='$availablespace' WHERE `username`='$username'");
-        if ($update) {
-            $_SESSION['availablespace'] = $availablespace;
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-    else{
-        return false;
     }
 }

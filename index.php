@@ -1,7 +1,8 @@
 <?php
 
-require_once("createNewWindow.php");
-require_once("dataBaseFunctions.php");
+require_once "additionalFunctions.php";
+require_once "dataBaseFunctions.php";
+
 session_start();
 
 
@@ -164,41 +165,3 @@ else{
 }
 
 print($html);
-
-function checkCoockie(){
-    if (isset($_COOKIE["cloudStorage"])){
-        $coockieArr = explode(":",$_COOKIE["cloudStorage"]);
-        $email = $coockieArr[0];
-        $ini = parse_ini_file("database/mysql.ini");
-        $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-        if(!$mysql){
-            print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
-            die();
-        }
-        $secretKey = "";
-        $user = getConcreteUser($mysql, "email", $email);
-        if(count($user) != 0){
-            $secretKey = $user['secretkey'];
-        }
-        else{
-            mysqli_close($mysql);
-            return false;
-        }
-        $coockieKeyHash = $coockieArr[1];
-        $key = $secretKey.$_SERVER["REMOTE_ADDR"];
-        if (password_verify($key, $coockieKeyHash)){
-                $_SESSION['username'] = $user["username"];
-                $_SESSION['path'] = "localStorage/".$_SESSION["username"];
-                $_SESSION['availablespace'] = $user["availablespace"];
-                mysqli_close($mysql);
-        }
-        else{
-            mysqli_close($mysql);
-            return checkCoockie();
-        }
-        return true;
-    }
-    else{
-        return false;
-    }
-}
