@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Окт 29 2019 г., 22:37
+-- Время создания: Ноя 10 2019 г., 22:18
 -- Версия сервера: 8.0.12
 -- Версия PHP: 7.2.10
 
@@ -25,6 +25,19 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `accessrights`
+--
+
+CREATE TABLE `accessrights` (
+  `path` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'путь к директории',
+  `owner` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Владелец файла или папки',
+  `accessmod` int(1) NOT NULL DEFAULT '0' COMMENT '0 - только для клиента, 1 - для выделенной группы пользователей, 2 - для всех пользователей',
+  `sharedaccess` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT 'id пользователей, которые имеют доступ к файлу или папке'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `users`
 --
 
@@ -36,13 +49,6 @@ CREATE TABLE `users` (
   `availablespace` varchar(255) NOT NULL DEFAULT '104857600' COMMENT 'доступное место для хранения',
   `secretkey` varchar(255) NOT NULL COMMENT 'секретный ключ для куки-авторизации'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Дамп данных таблицы `users`
---
-
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `availablespace`, `secretkey`) VALUES
-(1, 'SosiskaKiller', 'pivo47@mail.ru', '$2y$10$DFZp7Ap7xQUjdtYgPwUzdOZouREFCgaQEFvCkM8eaahKViY7R4ROG', '104857600', '5db88d957afd1');
 
 --
 -- Индексы сохранённых таблиц
@@ -62,7 +68,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'уникальный идентификатор', AUTO_INCREMENT=2;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'уникальный идентификатор', AUTO_INCREMENT=1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

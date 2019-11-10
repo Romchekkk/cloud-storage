@@ -51,6 +51,10 @@ if ($action && $action == "Зарегистрироваться" && $username &&
             print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
             die();
         }
+        if (!addToAccessrights($mysql, "localStorage/".$username)){
+            print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
+            die();
+        }
         mysqli_close($mysql);
         $_SESSION['username'] = $username;
         $_SESSION['path'] = "localStorage/".$username;
