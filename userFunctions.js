@@ -20,7 +20,7 @@ function deleteDirectory(dirName){
             "dirName": dirName
         },
         function(result){
-            document.getElementById("availableSpace").innerHTML = result.space;
+            document.getElementById("availablespace").innerHTML = result.space;
             document.getElementById("window-bottom").innerHTML = result.window;
         },
         true
@@ -62,7 +62,7 @@ function uploadFile(file){
             "file": file
         },
         function(result){
-            document.getElementById("availableSpace").innerHTML = result.space;
+            document.getElementById("availablespace").innerHTML = result.space;
             document.getElementById("window-bottom").innerHTML = result.window;
         },
         true
@@ -77,7 +77,7 @@ function deleteFile(fileName){
             "fileName": fileName,
         },
         function(result){
-            document.getElementById("availableSpace").innerHTML = result.space;
+            document.getElementById("availablespace").innerHTML = result.space;
             document.getElementById("window-bottom").innerHTML = result.window;
         },
         true

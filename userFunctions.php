@@ -38,6 +38,7 @@ switch ($action) {
         break;
     case "goBack":
         $action($path);
+        $path = $_SESSION['path'];
         break;
     case "changeDirectory":
         $action($dirName);
@@ -46,11 +47,8 @@ switch ($action) {
         exit();
 }
 
-$path = $_SESSION['path'];
-$topWindow = $_SESSION['availableSpace'];
-
 $_RESULT["window"] = newWindow($path);
-$_RESULT["space"] = $topWindow;
+$_RESULT["space"] = $_SESSION['availablespace'];
 
 function createDirectory($path, $dirName)
 {
@@ -60,6 +58,8 @@ function createDirectory($path, $dirName)
     $dir = $path . '/' . $dirName;
     if(!is_dir($dir)) {
         mkdir($dir);
+        //$ini = parse_ini_file("database/mysql.ini");
+        //$mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
     }
     return true;
 }
@@ -133,16 +133,19 @@ function deleteFile($path, $fileName)
     // }
     $file = $path . "/" . $fileName;
     $size = filesize($file);
-    if (unlink($file)) {
-        $ini = parse_ini_file("database/mysql.ini");
-        $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-        if (!$mysql) {
-            return false;
-        }
-        newAvailableSpace($size, "-", $_SESSION['username'], $mysql);
-        mysqli_close($mysql);
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    if (!$mysql) {
+        return false;
     }
-    return true;
+    if (newAvailableSpace($size, "-", $_SESSION['username'], $mysql)) {
+        mysqli_close($mysql);
+        unlink($file);
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 
@@ -204,7 +207,7 @@ function newAvailableSpace($size, $sign, $username, $mysql){
         }
         $update = mysqli_query($mysql, "UPDATE `users` SET `availablespace`='$availablespace' WHERE `username`='$username'");
         if ($update) {
-            $_SESSION['availableSpace'] = $availablespace;
+            $_SESSION['availablespace'] = $availablespace;
         }
     }
     return true;

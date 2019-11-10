@@ -142,7 +142,7 @@ else{
 </td>
 <td>
     <form method=\"post\" enctype=\"multipart/form-data\">
-    <input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file,'$usernameHTML')\" />
+    <input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file)\" />
     </form>
 </td>";
     $windowHTML = newWindow($_SESSION['path']);

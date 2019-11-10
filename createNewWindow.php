@@ -4,7 +4,7 @@ function newWindow($path){
     $htmlfile = "";
     $files = glob($path."\*");
     foreach($files as $filename){
-        $nameFile = array_reverse (explode("\\",$filename))[0];
+        $nameFile = basename($filename);
         if (is_dir($filename))
         {
             $htmldir .= "<div class=\"directory\">";
