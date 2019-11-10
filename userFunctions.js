@@ -36,6 +36,7 @@ function changeDirectory(dirName){
         },
         function(result){
             document.getElementById("window-bottom").innerHTML = result.window;
+            document.getElementById("path").innerHTML = result.path;
         },
         true
     );
@@ -49,6 +50,7 @@ function goBack(){
         },
         function(result){
             document.getElementById("window-bottom").innerHTML = result.window;
+            document.getElementById("path").innerHTML = result.path;
         },
         true
     );

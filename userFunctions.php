@@ -39,10 +39,12 @@ switch ($action) {
     case "goBack":
         $action($path);
         $path = $_SESSION['path'];
+        $_RESULT['path'] = explode("/", $path, 2)[1];
         break;
     case "changeDirectory":
         $action($dirName);
         $path = $_SESSION['path'];
+        $_RESULT['path'] = explode("/", $path, 2)[1];
         break;
     default:
         exit();

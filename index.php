@@ -135,7 +135,8 @@ else{
     $usernameHTML = $_SESSION['username'];
     $menuHTML = "<td>
 Доступно места: <span id=\"availablespace\">".$_SESSION['availablespace']."</span> Байт<br />
-<input type=\"button\" value=\"Назад\" onclick=\"goBack()\" />
+<input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /><br />
+Путь: <span id=\"path\">".explode("/", $_SESSION['path'], 2)[1]."</span>
 </td>
 <td>
     <input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" />
