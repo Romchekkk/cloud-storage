@@ -48,14 +48,14 @@ if ($action && $action == "Зарегистрироваться" && $username &&
             print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
             die();
         }
+        $_SESSION['username'] = $username;
+        $_SESSION['path'] = "localStorage/".$username;
+        $_SESSION['availablespace'] = 104857600;
         if (!addToAccessrights($mysql, "localStorage/".$username)){
             print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
             die();
         }
         mysqli_close($mysql);
-        $_SESSION['username'] = $username;
-        $_SESSION['path'] = "localStorage/".$username;
-        $_SESSION['availablespace'] = 104857600;
         mkdir($_SESSION['path']);
         $forcoockie = $secretKey.$_SERVER['REMOTE_ADDR'];
         setcookie("cloudStorage", $email.':'.password_hash($forcoockie, PASSWORD_DEFAULT), time()+60*60*24);
@@ -132,7 +132,6 @@ else{
         print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
         die();
     }
-    mysqli_close($mysql);
     $usernameHTML = $_SESSION['username'];
     $menuHTML = "<td>
 Доступно места: <span id=\"availablespace\">".$_SESSION['availablespace']."</span> Байт<br />
@@ -148,17 +147,21 @@ else{
     </form>
 </td>";
     $windowHTML = newWindow($_SESSION['path']);
-
     $usersHTML = "";
     $i = 0;
     foreach($usersArr as $user){
         if ($i == 15){
             break;
         }
-        $usersHTML .= "<li class=\"close\">".$user["username"]."</li>";
+        if (checkAccessRights($mysql, "localStorage/".$user['username'], $_SESSION['username'])){
+            $usersHTML .= "<li class=\"open\">".$user['username']."</li>";
+        }
+        else{
+            $usersHTML .= "<li class=\"close\">".$user['username']."</li>";
+        }
         $i++;
     }
-
+    mysqli_close($mysql);
     $html = file_get_contents("html_patterns/main.html");
     foreach(array('usernameHTML', 'menuHTML', 'windowHTML', 'usersHTML') as $value){
         $html = preg_replace("/$value/uis", $$value, $html);

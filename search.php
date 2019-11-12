@@ -20,8 +20,14 @@ while($row = mysqli_fetch_array($result)){
     if ($i == 15){
         break;
     }
-    $usersList .= "<li class=\"close\">".$row['username']."</li>";
+    if (checkAccessRights($mysql, "localStorage/".$user['username'], $_SESSION['username'])){
+        $usersHTML .= "<li class=\"open\">".$user['username']."</li>";
+    }
+    else{
+        $usersHTML .= "<li class=\"close\">".$user['username']."</li>";
+    }
     $i++;
 }
+mysqli_close($mysql);
 global $_RESULT;
 $_RESULT['usersList'] = $usersList;

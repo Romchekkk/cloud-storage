@@ -3,16 +3,16 @@
 session_start();
 
 function newWindow($path){
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
     $htmldir = "";
     $htmlfile = "";
     $files = glob($path."/*");
     foreach($files as $filename){
         $nameFile = basename($filename);
-        if (is_dir($filename))
-        {
+        if (is_dir($filename)){
             $htmldir .= "<div class=\"directory\">";
-            if(1) //здесь будет функция проверки прав доступа у конкретной директории
-            {
+            if(checkAccessRights($mysql, $filename, $_SESSION['username'])){
                 $htmldir .= "<div class=\"hide\">
                                 <input class=\"changeMod\" type=\"button\" value=\"&nbsp;\" />
                                 <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
@@ -20,17 +20,10 @@ function newWindow($path){
                             <img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />$nameFile
                         </div>";
             }
-            else
-            {
-                $htmldir .= "<img src=\"images/dir.png\" />$nameFile
-                        </div>";
-            }
         }
-        else 
-        {
+        else {
             $htmlfile .= "<div class=\"file\">";
-            if(1) //здесь будет функция проверки прав доступа у конкретного файла
-            {
+            if(checkAccessRights($mysql, $filename, $_SESSION['username'])){
                 $htmlfile .= "<div class=\"hide\">
                                 <input class=\"changeMod\" type=\"button\" value=\"&nbsp;\" />
                                 <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
@@ -39,13 +32,9 @@ function newWindow($path){
                             <img src=\"images/file.png\" />$nameFile
                         </div>";
             }
-            else 
-            {
-                $htmlfile .= "<img src=\"images/file.png\" />$nameFile
-                        </div>";
-            }
         }
     }
+    mysqli_close($mysql);
     return $htmldir.$htmlfile;
 }
 
@@ -159,36 +148,48 @@ function checkCoockie(){
 }
 
 function checkAccessRights($mysql, $path, $username){
-    $result = mysqli_query($mysql, "SELECT `accessmod` FROM `accessrights` WHERE path='$path'");
+    $result = mysqli_query($mysql, "SELECT `owner` FROM `accessrights` WHERE path='$path'");
     if ($result) {
-        $accessmod = mysqli_fetch_array($result)['accessmod'];
-        if ($accessmod == 0){
-            return false;
+        $owner = mysqli_fetch_array($result)['owner'];
+        if ($owner == $username) {
+            return true;
         }
-        elseif ($accessmod == 1){
-            $result = mysqli_query($mysql, "SELECT `sharedaccess` FROM `accessrights` WHERE path='$path'");
+        else {
+            $result = mysqli_query($mysql, "SELECT `accessmod` FROM `accessrights` WHERE path='$path'");
             if ($result) {
-                $sharedaccess = mysqli_fetch_array($result)['sharedaccess'];
-                $result = mysqli_query($mysql, "SELECT `id` FROM `users` WHERE username='$username'");
-                if ($result) {
-                    $id = mysqli_fetch_array($result)['id'];
-                    if (preg_match("/\/$id\//uis", $sharedaccess)) {
-                        return true;
+                $accessmod = mysqli_fetch_array($result)['accessmod'];
+                if ($accessmod == 0){
+                        return false;
+                }
+                elseif ($accessmod == 1){
+                    $result = mysqli_query($mysql, "SELECT `sharedaccess` FROM `accessrights` WHERE path='$path'");
+                    if ($result) {
+                        $sharedaccess = mysqli_fetch_array($result)['sharedaccess'];
+                        $result = mysqli_query($mysql, "SELECT `id` FROM `users` WHERE username='$username'");
+                        if ($result) {
+                            $id = mysqli_fetch_array($result)['id'];
+                            if (preg_match("/\/$id\//uis", $sharedaccess)) {
+                                return true;
+                            }
+                            else{
+                                return false;
+                            }
+                        }
+                        else{
+                            return false;
+                        }
                     }
                     else{
                         return false;
                     }
                 }
-                else{
-                    return false;
+                elseif($accessmod == 2){
+                    return true;
                 }
             }
             else{
                 return false;
             }
-        }
-        else{
-            return true;
         }
     }
     else{
