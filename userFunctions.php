@@ -225,7 +225,7 @@ function changeMod($path, $fileName, $newMod, $usersArr = array()) {
         foreach($userArr as $username) {
             $userId = mysqli_query($mysql, "SELECT `id` FROM `users` WHERE `username`='$username'");
             if ($userId) {
-                $result = mysqli_query($mysql, "UPDATE `accessrights` SET `sharedaccess`='$sharedacessStr.$userId.','' WHERE `path`='$file");
+                $result = mysqli_query($mysql, "UPDATE `accessrights` SET `sharedaccess`='$sharedacessStr.$userId.','' WHERE `path`='$file'");
                 if (!$result) {
                     mysqli_close($mysql);
                     return false;
