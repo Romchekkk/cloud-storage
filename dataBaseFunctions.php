@@ -13,8 +13,13 @@ function getUsers($mysql){
 
 function getConcreteUser($mysql, $columnName, $value){
     $result = mysqli_query($mysql, "SELECT * FROM `users` WHERE $columnName='$value'");
-    $user = mysqli_fetch_array($result);
-    return $user;
+    if ($result){
+        $user = mysqli_fetch_array($result);
+        return $user;
+    }
+    else{
+        return false;
+    }
 }
 
 function addToAccessrights($mysql, $path){
