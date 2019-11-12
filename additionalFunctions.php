@@ -158,7 +158,40 @@ function checkCoockie(){
     }
 }
 
-function checkAccessRights($path, $user){
-    // Проверка прав доступа
-    return true;
+function checkAccessRights($mysql, $path, $username){
+    $result = mysqli_query($mysql, "SELECT `accessmod` FROM `accessrights` WHERE path='$path'");
+    if ($result) {
+        $accessmod = mysqli_fetch_array($result)['accessmod'];
+        if ($accessmod == 0){
+            return false;
+        }
+        elseif ($accessmod == 1){
+            $result = mysqli_query($mysql, "SELECT `sharedaccess` FROM `accessrights` WHERE path='$path'");
+            if ($result) {
+                $sharedaccess = mysqli_fetch_array($result)['sharedaccess'];
+                $result = mysqli_query($mysql, "SELECT `id` FROM `users` WHERE username='$username'");
+                if ($result) {
+                    $id = mysqli_fetch_array($result)['id'];
+                    if (preg_match("/\/$id\//uis", $sharedaccess)) {
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                else{
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return true;
+        }
+    }
+    else{
+        return false;
+    }
 }

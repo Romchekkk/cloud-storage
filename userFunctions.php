@@ -53,13 +53,13 @@ $_RESULT["window"] = newWindow($path);
 $_RESULT["space"] = $_SESSION['availablespace'];
 
 function createDirectory($path, $dirName){
-    // if (!checkAccessRights($path, $_SESSION['user'])){
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
     //     return false;
     // }
     $dir = $path . '/' . $dirName;
     if(!is_dir($dir)) {
-        $ini = parse_ini_file("database/mysql.ini");
-        $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
         if (mkdir($dir)) {
             if (addToAccessrights($mysql, $dir)) {
                 mysqli_close($mysql);
@@ -82,7 +82,9 @@ function createDirectory($path, $dirName){
 }
 
 function deleteDirectory($path, $dirName){
-    // if (!checkAccessRights($path, $_SESSION['user'])){
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
     //     return false;
     // }
     $ini = parse_ini_file("database/mysql.ini");
@@ -111,7 +113,9 @@ function deleteDirectory($path, $dirName){
 }
 
 function uploadFile($path){
-    // if (!checkAccessRights($path, $_SESSION['user'])){
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
     //     return false;
     // }
     $size = $_FILES['file']['size'];
@@ -164,14 +168,18 @@ function uploadFile($path){
 
 
 function downloadFile($path, $fileName){
-    // if (!checkAccessRights($path, $_SESSION['user'])){
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
     //     return false;
     // }
     return true;
 }
 
 function deleteFile($path, $fileName){
-    // if (!checkAccessRights($path, $_SESSION['user'])){
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
     //     return false;
     // }
     $file = $path . "/" . $fileName;
@@ -209,7 +217,9 @@ function deleteFile($path, $fileName){
 }
 
 function changeMod($path, $fileName, $newMod, $usersArr = array()) {
-    // if (!checkAccessRights($path, $_SESSION['user'])){
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
     //     return false;
     // }
     $file = $path.'/'.$fileName;
@@ -255,7 +265,9 @@ function changeMod($path, $fileName, $newMod, $usersArr = array()) {
 }
 
 function changeDirectory($dirName){
-    // if (!checkAccessRights($path, $_SESSION['user'])){
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
     //     return false;
     // }
     $_SESSION['path'] .= '/' . $dirName;
