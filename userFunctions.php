@@ -19,7 +19,7 @@ $path = $_SESSION['path'];
 global $_RESULT;
 switch ($action) {
     case "changeMod":
-        $action($path, $newMod);
+        $action($path, $fileName, $newMod, $usersArr);
         break;
     case "createDirectory":
     case "deleteDirectory":
@@ -209,11 +209,40 @@ function deleteFile($path, $fileName){
 }
 
 
-function changeMod($path, $newMod){
+function changeMod($path, $fileName, $newMod, $usersArr = array()) {
     // if (!checkAccessRights($path, $_SESSION['user'])){
     //     return false;
     // }
-    // Изменение прав доступа
+    $file = $path.'/'.$fileName;
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    if ($mysql) {
+        $newModResult = mysqli_query($mysql, "UPDATE `accessrights` SET `accessmod`='$newMod' WHERE `path`='$file'");
+        if (!$newModResult) {
+            mysqli_close($mysql);
+            return false;
+        }
+        $sharedacessStr = mysqli_query($mysql, "SELECT `sharedaccess` FROM `accessrights` WHERE `path`='$file'");
+        foreach($userArr as $username) {
+            $userId = mysqli_query($mysql, "SELECT `id` FROM `users` WHERE `username`='$username'");
+            if ($userId) {
+                $result = mysqli_query($mysql, "UPDATE `accessrights` SET `sharedaccess`='$sharedacessStr.$userId.','' WHERE `path`='$file");
+                if (!$result) {
+                    mysqli_close($mysql);
+                    return false;
+                }
+            }
+            else {
+                mysqli_close($mysql);
+                return false;
+            }
+        }
+    }
+    else {
+        mysqli_close($mysql);
+        return false;
+    }
+
+    mysqli_close($mysql);
     return true;
 }
 

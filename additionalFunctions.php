@@ -131,7 +131,6 @@ function checkCoockie(){
             die();
         }
         $secretKey = "";
-        //$user = array();
         $user = getConcreteUser($mysql, "email", $email);
         if($user){
             $secretKey = $user['secretkey'];

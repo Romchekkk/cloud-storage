@@ -29,10 +29,6 @@ if ($action && $action == "Зарегистрироваться" && $username &&
             die();
         }
         $usersArr = getUsers($mysql);
-        if(count($usersArr) == 0){
-            print("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
-            die();
-        }
         foreach ($usersArr as $user) { 
             if ($user['username'] == $username){
                 $_SESSION['error'] = "Имя пользователя занято!";
