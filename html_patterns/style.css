@@ -38,7 +38,7 @@ div:hover .hide{display: block;}
 #users{height: 100%; width: 100%; background: #dadada; border-spacing: 10px;}
 #users>tbody>tr:first-child{height: 30px;}
 #users>tbody>tr:first-child input{width: 80%; height: 30px;}
-#users>tbody>tr:nth-child(2)>td{height: 90%; position: relative; border: 1px solid black; background: white;}
+#users>tbody>tr:nth-child(2)>td{height: 90%; position: relative; border: 1px solid black; background: white; overflow: hidden;}
 #usersList{position: absolute; top: 0px;}
 #usersList>li{text-align: left; padding: 10px 0px 0px 10px; font-size: 30px; list-style-type: none;}
 

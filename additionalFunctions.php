@@ -5,7 +5,7 @@ session_start();
 function newWindow($path){
     $htmldir = "";
     $htmlfile = "";
-    $files = glob($path."\*");
+    $files = glob($path."/*");
     foreach($files as $filename){
         $nameFile = basename($filename);
         if (is_dir($filename))

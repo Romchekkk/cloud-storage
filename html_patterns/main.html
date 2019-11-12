@@ -9,11 +9,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
         <script src="JsHttpRequest/JsHttpRequest.js"></script>
         <script src="userFunctions.js"></script>
-        <script>
-            function search(){
-                document.getElementById("window-bottom").innerHTML = document.getElementById("text").value;
-            }
-        </script>
+        <script src="search.js"></script>
     </head>
     <body>
         <table id="header">
@@ -60,7 +56,7 @@
                             <tbody>
                                 <tr>
                                     <td>
-                                        <input id="text" type="text" onkeyup="search()" />
+                                        <input id="search" type="text" onkeyup="search()" />
                                     </td>
                                 </tr>
                                 <tr>

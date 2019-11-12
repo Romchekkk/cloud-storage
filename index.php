@@ -102,7 +102,7 @@ if ($action && $action == "Войти" && $email && $password){
 }
 
 if(!checkCoockie()){
-    $html = file_get_contents("html_patterns/reg.txt");
+    $html = file_get_contents("html_patterns/reg.html");
     $formHTML = "<div id=\"regForm\">
     <form action=\"\" method=\"post\">
         <p>Регистрация</p>
@@ -150,11 +150,16 @@ else{
     $windowHTML = newWindow($_SESSION['path']);
 
     $usersHTML = "";
+    $i = 0;
     foreach($usersArr as $user){
+        if ($i == 15){
+            break;
+        }
         $usersHTML .= "<li class=\"close\">".$user["username"]."</li>";
+        $i++;
     }
 
-    $html = file_get_contents("html_patterns/html.txt");
+    $html = file_get_contents("html_patterns/main.html");
     foreach(array('usernameHTML', 'menuHTML', 'windowHTML', 'usersHTML') as $value){
         $html = preg_replace("/$value/uis", $$value, $html);
     }
