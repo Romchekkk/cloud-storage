@@ -5,9 +5,16 @@
 # If you need both WebDriver and PHPBrowser tests - create a separate suite.
 
 actor: AcceptanceTester
-modules:
+modules:  
     enabled:
         - PhpBrowser:
             url: http://*/cloud-storage
         - \Helper\Acceptance
+        - Db:
+            dsn: 'mysql:host=localhost;dbname=cloudstoragedb'
+            user: 'root'
+            password: ''
+            populate: true
+            cleanup: true
+            dump: 'tests/_data/dump.sql'      
     step_decorators: ~        
