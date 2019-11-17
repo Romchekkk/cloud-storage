@@ -8,6 +8,6 @@ actor: AcceptanceTester
 modules:
     enabled:
         - PhpBrowser:
-            url: http://jopa.jopa/cloud-storage
+            url: http://*/cloud-storage
         - \Helper\Acceptance
     step_decorators: ~        

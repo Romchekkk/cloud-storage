@@ -20,3 +20,11 @@ $I->see('Добро пожаловать, nukce');
 $I->wantTo('log out');
 $I->click('Выйти');
 $I->see('Регистрация'); 
+
+$I->wantTo('register an already registered user');
+$I->fillField('username','nukce');
+$I->fillField('email','nukce@mail.ru');
+$I->fillField('password','123');
+$I->click('Зарегистрироваться');
+$I->see('Имя пользователя занято!');
+
