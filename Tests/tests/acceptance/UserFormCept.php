@@ -2,6 +2,7 @@
 $I = new AcceptanceTester($scenario);
 $I->wantTo('registrate a new user and save him in DataBase');
 $I->amOnPage('/');
+$I->dontSeeInDatabase ('users', array ('username' => 'hacker', 'email' => 'hacker@mail.ru'));
 $I->fillField('username','hacker');
 $I->fillField('email','hacker@mail.ru');
 $I->fillField('password','123');

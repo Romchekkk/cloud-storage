@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Ноя 10 2019 г., 22:18
+-- Время создания: Ноя 17 2019 г., 22:03
 -- Версия сервера: 8.0.12
 -- Версия PHP: 7.2.10
 
@@ -35,6 +35,13 @@ CREATE TABLE `accessrights` (
   `sharedaccess` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT 'id пользователей, которые имеют доступ к файлу или папке'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Дамп данных таблицы `accessrights`
+--
+
+INSERT INTO `accessrights` (`path`, `owner`, `accessmod`, `sharedaccess`) VALUES
+('localStorage/nukce', 'nukce', 2, '1');
+
 -- --------------------------------------------------------
 
 --
@@ -49,6 +56,13 @@ CREATE TABLE `users` (
   `availablespace` varchar(255) NOT NULL DEFAULT '104857600' COMMENT 'доступное место для хранения',
   `secretkey` varchar(255) NOT NULL COMMENT 'секретный ключ для куки-авторизации'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `availablespace`, `secretkey`) VALUES
+(1, 'nukce', 'nukce@mail.ru', '$2y$10$Ed1zybf.iDOm.DdmuiDO.esgbiftJmmMfwdW72Q1UFDG3eIFAaMMu', '104857600', '5dd16cd5c40a4');
 
 --
 -- Индексы сохранённых таблиц
@@ -68,7 +82,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'уникальный идентификатор', AUTO_INCREMENT=1;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'уникальный идентификатор', AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
