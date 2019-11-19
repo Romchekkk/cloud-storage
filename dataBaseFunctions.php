@@ -40,3 +40,14 @@ function removeFromAccessrights($mysql, $path){
         return false;
     }
 }
+
+function getAccessrights($mysql, $path){
+    $result = mysqli_query($mysql, "SELECT `accessmod` FROM `accessrights` WHERE path='$path'");
+    if ($result){
+        $accessmod = mysqli_fetch_array($result)['accessmod'];
+        return $accessmod;
+    }
+    else{
+        return false;
+    }
+}

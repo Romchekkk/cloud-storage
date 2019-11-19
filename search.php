@@ -20,8 +20,9 @@ while($row = mysqli_fetch_array($result)){
     if ($i == 15){
         break;
     }
-    if (checkAccessRights($mysql, "localStorage/".$user['username'], $_SESSION['username'])){
-        $usersHTML .= "<li class=\"open\">".$user['username']."</li>";
+    $accessRights = checkAccessRights($mysql, "localStorage/".$user['username'], $_SESSION['username']);
+    if($accessRights === 0 || $accessRights === 1 || $accessRights === 2){
+        $usersHTML .= "<li class=\"open\"><input type=\"button\" value=\"".$user['username']."\" onclick=\"openUser(this.value)\" /></li>";
     }
     else{
         $usersHTML .= "<li class=\"close\">".$user['username']."</li>";

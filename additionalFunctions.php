@@ -2,7 +2,7 @@
 
 session_start();
 
-function newWindow($path){
+function newWindow($path, $username){
     $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
     $htmldir = "";
@@ -12,22 +12,34 @@ function newWindow($path){
         $nameFile = basename($filename);
         if (is_dir($filename)){
             $htmldir .= "<div class=\"directory\">";
-            if(checkAccessRights($mysql, $filename, $_SESSION['username'])){
+            $accessRights = checkAccessRights($mysql, $filename, $username);
+            if($accessRights === 0){
                 $htmldir .= "<div class=\"hide\">
-                                <input class=\"changeMod\" type=\"button\" value=\"&nbsp;\" />
+                                <input class=\"changeMod\" type=\"button\" value=\"".getAccessrights($mysql, $filename)."\" onclick=\"changeMod(this.value, '".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                                 <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                              </div>
                             <img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />$nameFile
                         </div>";
             }
+            elseif($accessRights === 1 || $accessRights === 2){
+                $htmldir .= "<img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />$nameFile</div>";
+            }
         }
         else {
             $htmlfile .= "<div class=\"file\">";
-            if(checkAccessRights($mysql, $filename, $_SESSION['username'])){
+            $accessRights = checkAccessRights($mysql, $filename, $username);
+            if($accessRights === 0){
                 $htmlfile .= "<div class=\"hide\">
-                                <input class=\"changeMod\" type=\"button\" value=\"&nbsp;\" />
+                                <input class=\"changeMod\" type=\"button\" value=\"".getAccessrights($mysql, $filename)."\" onclick=\"changeMod(this.value, '".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                                 <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                                 <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
+                              </div>
+                            <img src=\"images/file.png\" />$nameFile
+                        </div>";
+            }
+            elseif($accessRights === 1 || $accessRights === 2){
+                $htmlfile .= "<div class=\"hide\">
+                                <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                               </div>
                             <img src=\"images/file.png\" />$nameFile
                         </div>";
@@ -152,14 +164,14 @@ function checkAccessRights($mysql, $path, $username){
     if ($result) {
         $owner = mysqli_fetch_array($result)['owner'];
         if ($owner == $username) {
-            return true;
+            return 0;
         }
         else {
             $result = mysqli_query($mysql, "SELECT `accessmod` FROM `accessrights` WHERE path='$path'");
             if ($result) {
                 $accessmod = mysqli_fetch_array($result)['accessmod'];
                 if ($accessmod == 0){
-                        return false;
+                        return -1;
                 }
                 elseif ($accessmod == 1){
                     $result = mysqli_query($mysql, "SELECT `sharedaccess` FROM `accessrights` WHERE path='$path'");
@@ -169,30 +181,30 @@ function checkAccessRights($mysql, $path, $username){
                         if ($result) {
                             $id = mysqli_fetch_array($result)['id'];
                             if (preg_match("/\/$id\//uis", $sharedaccess)) {
-                                return true;
+                                return 1;
                             }
                             else{
-                                return false;
+                                return -1;
                             }
                         }
                         else{
-                            return false;
+                            return -1;
                         }
                     }
                     else{
-                        return false;
+                        return -1;
                     }
                 }
                 elseif($accessmod == 2){
-                    return true;
+                    return 2;
                 }
             }
             else{
-                return false;
+                return -1;
             }
         }
     }
     else{
-        return false;
+        return -1;
     }
 }

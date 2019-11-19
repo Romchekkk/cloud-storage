@@ -133,31 +133,45 @@ else{
         die();
     }
     $usernameHTML = $_SESSION['username'];
+    $result = mysqli_query($mysql, "SELECT * FROM `accessrights` WHERE path='localStorage/$usernameHTML'");
+    if ($result){
+        $user = mysqli_fetch_array($result);
+        $rootAccessMod = $user[2];
+    }
+    else{
+        // Обработка ошибки
+    }
     $menuHTML = "<td>
-Доступно места: <span id=\"availablespace\">".$_SESSION['availablespace']."</span> Байт<br />
-<input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /><br />
-Путь: <span id=\"path\">".explode("/", $_SESSION['path'], 2)[1]."</span>
-</td>
-<td>
-    <input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" />
-</td>
-<td>
-    <form method=\"post\" enctype=\"multipart/form-data\">
-    <input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file)\" />
-    </form>
-</td>";
-    $windowHTML = newWindow($_SESSION['path']);
+    Доступно места: <span id=\"availablespace\">".$_SESSION['availablespace']."</span> Байт<br />
+    <input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /><br />
+    Путь: <span id=\"path\">".explode("/", $_SESSION['path'], 2)[1]."</span>
+    </td>
+    <td>
+        Уровень доступа к вашей<br />
+        корневой папке: <form><input type=\"text\" id=\"accessRootMod\" disabled=\"disabled\" name=\"accessmod\" value=\"$rootAccessMod\" />
+        <input type=\"button\" value=\"Изменить\" onclick=\"changeRootDirMod(this.form.accessmod.value)\"></form>
+    </td>
+    <td>
+        <input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" />
+    </td>
+    <td>
+        <form method=\"post\" enctype=\"multipart/form-data\">
+        <input type=\"file\" name=\"file\" /><input type=\"button\" value=\"Загрузить файл\" onclick=\"uploadFile(this.form.file)\" />
+        </form>
+    </td>";
+    $windowHTML = newWindow($_SESSION['path'], $_SESSION['username']);
     $usersHTML = "";
     $i = 0;
     foreach($usersArr as $user){
         if ($i == 15){
             break;
         }
-        if (checkAccessRights($mysql, "localStorage/".$user['username'], $_SESSION['username'])){
-            $usersHTML .= "<li class=\"open\">".$user['username']."</li>";
+        $accessRights = checkAccessRights($mysql, "localStorage/".$user['username'], $_SESSION['username']);
+        if($accessRights === 0 || $accessRights === 1 || $accessRights === 2){
+            $usersHTML .= "<li class=\"open\"><input type=\"button\" value=\"".$user['username']."\" onclick=\"openUser(this.value)\" /></li>";
         }
         else{
-            $usersHTML .= "<li class=\"close\">".$user['username']."</li>";
+            $usersHTML .= "<li class=\"close\"><input type=\"button\" value=\"".$user['username']."\" /></li>";
         }
         $i++;
     }

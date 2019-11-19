@@ -31,7 +31,7 @@ img{width: 100px; height: 100px;}
 .hide{display: none;; position: absolute; top: 20px; right: 0px;}
 div:hover .hide{display: block;}
 
-.changeMod{background-image: url("../images/changeMod.png"); background-size: 100%; border-radius: 10px; width: 20px;}
+.changeMod{background-color: gray; border-radius: 10px; width: 20px;}
 .download{background-image: url("../images/download.png"); background-size: 100%; border-radius: 10px; width: 20px;}
 .delete{background-image: url("../images/delete.png"); background-size: 100%;  width: 20px;}
 
@@ -42,8 +42,8 @@ div:hover .hide{display: block;}
 #usersList{position: absolute; top: 0px;}
 #usersList>li{text-align: left; padding: 10px 0px 0px 10px; font-size: 30px; list-style-type: none;}
 
-.open{color: green;}
-.close{color: red;}
+.open>input{color: green; border: none; background: none; font-size: larger;}
+.close>input{color: red; border: none; background: none; font-size: larger;}
 
 #regForm{border: 1px solid black; border-radius: 10px; margin-left:40%; margin-right: 40%; height:200px; background-color: gray;}
 #regForm p{margin: 5px 0px;}

@@ -8,10 +8,15 @@ session_start();
 
 $js = new JsHttpRequest("utf-8");
 
-foreach (array('action', 'newMod', 'dirName', 'fileName') as $parameterName) {
+foreach (array('action', 'newMod', 'dirName', 'fileName', 'user', 'isRoot') as $parameterName) {
     $$parameterName = isset($_REQUEST[$parameterName])
         ? trim($_REQUEST[$parameterName])
         : "";
+}
+
+if($newMod !== ""){
+    $newMod += 1;
+    $newMod %= 3;
 }
 
 $path = $_SESSION['path'];
@@ -19,7 +24,9 @@ $path = $_SESSION['path'];
 global $_RESULT;
 switch ($action) {
     case "changeMod":
-        $action($path, $fileName, $newMod, $usersArr);
+        if ($action($path, $fileName, $newMod, $isRoot, $usersArr)){
+            $_RESULT['newMod'] = $newMod;
+        }
         break;
     case "createDirectory":
     case "deleteDirectory":
@@ -41,23 +48,43 @@ switch ($action) {
         $_RESULT['path'] = explode("/", $path, 2)[1];
         break;
     case "changeDirectory":
-        $action($dirName);
-        $path = $_SESSION['path'];
-        $_RESULT['path'] = explode("/", $path, 2)[1];
+        if ($action($dirName)){
+            $path = $_SESSION['path'];
+            $_RESULT['path'] = explode("/", $path, 2)[1];
+        }
+        else{
+            $_RESULT['path'] = explode("/", $_SESSION['path'], 2)[1];
+        }
+        break;
+    case "openUser":
+        if ($action($user)){
+            $path = $_SESSION['path'];
+            $_RESULT['path'] = explode("/", $path, 2)[1];
+        }
+        else{
+            $_RESULT['path'] = explode("/", $_SESSION['path'], 2)[1];
+        }
         break;
     default:
         exit();
 }
 
-$_RESULT["window"] = newWindow($path);
+if (!$user){
+    $user = $_SESSION['username'];
+}
+$_RESULT["window"] = newWindow($path, $user);
 $_RESULT["space"] = $_SESSION['availablespace'];
 
 function createDirectory($path, $dirName){
     $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
-    //     return false;
-    // }
+    
+    $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
+    if ($accessRigths !== 0){
+        mysqli_close($mysql);
+        return false;
+    }
+
     $dir = $path . '/' . $dirName;
     if(!is_dir($dir)) {
         if (mkdir($dir)) {
@@ -84,11 +111,13 @@ function createDirectory($path, $dirName){
 function deleteDirectory($path, $dirName){
     $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
-    //     return false;
-    // }
-    $ini = parse_ini_file("database/mysql.ini");
-    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+    
+    $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
+    if ($accessRigths !== 0){
+        mysqli_close($mysql);
+        return false;
+    }
+
     if (!$mysql) {
         return false;
     }
@@ -115,9 +144,14 @@ function deleteDirectory($path, $dirName){
 function uploadFile($path){
     $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
-    //     return false;
-    // }
+    
+    
+    $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
+    if ($accessRigths !== 0){
+        mysqli_close($mysql);
+        return false;
+    }
+
     $size = $_FILES['file']['size'];
     if ($size > $_SESSION['availablespace']){
         return false;
@@ -138,8 +172,6 @@ function uploadFile($path){
             }
             $filePath = preg_replace("@"."$path/$fileName"."@uis", "$path/$fileName($number)", $filePath);
         }
-        $ini = parse_ini_file("database/mysql.ini");
-        $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
         if (move_uploaded_file($_FILES['file']['tmp_name'], $filePath)) {
             if (addToAccessrights($mysql, $filePath)) {
                 if (newAvailableSpace($size, "+", $_SESSION['username'], $mysql)){
@@ -170,23 +202,31 @@ function uploadFile($path){
 function downloadFile($path, $fileName){
     $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
-    //     return false;
-    // }
+    
+    $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
+    if ($accessRigths === -1){
+        mysqli_close($mysql);
+        return false;
+    }
+
+    mysqli_close($mysql);
     return true;
 }
 
 function deleteFile($path, $fileName){
     $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
-    //     return false;
-    // }
+    
+    $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
+    if ($accessRigths !== 0){
+        mysqli_close($mysql);
+        return false;
+    }
+    
     $file = $path . "/" . $fileName;
     $size = filesize($file);
-    $ini = parse_ini_file("database/mysql.ini");
-    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
     if (!$mysql) {
+        mysqli_close($mysql);
         return false;
     }
     else{
@@ -216,15 +256,39 @@ function deleteFile($path, $fileName){
     }
 }
 
-function changeMod($path, $fileName, $newMod, $usersArr = array()) {
+function changeMod($path, $fileName, $newMod, $isRoot, $usersArr = array()) {
     $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
-    //     return false;
-    // }
+
+    $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
+    if ($accessRigths !== 0){
+        mysqli_close($mysql);
+        return false;
+    }
+
+    if ($isRoot){
+        $file = "localStorage/".$_SESSION['username'];
+        if (!mysqli_query($mysql, "UPDATE `accessrights` SET `sharedaccess`='', `accessmod`=$newMod WHERE path='$file'")){
+            mysqli_close($mysql);
+            return false;
+        }
+        else{
+            mysqli_close($mysql);
+            return true;
+        }
+    }
+    else{
+        $file = "$path/$fileName";
+        if (!mysqli_query($mysql, "UPDATE `accessrights` SET `sharedaccess`='', `accessmod`=$newMod WHERE path='$file'")){
+            mysqli_close($mysql);
+            return false;
+        }
+        else{
+            mysqli_close($mysql);
+            return true;
+        }
+    }
     $file = $path.'/'.$fileName;
-    $ini = parse_ini_file("database/mysql.ini");
-    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
     if ($mysql) {
         if ($newMod == 1){
             $sharedaccess = "";
@@ -267,10 +331,18 @@ function changeMod($path, $fileName, $newMod, $usersArr = array()) {
 function changeDirectory($dirName){
     $ini = parse_ini_file("database/mysql.ini");
     $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
-    // if (!checkAccessRights($mysql, $path, $_SESSION['username'])){
-    //     return false;
-    // }
-    $_SESSION['path'] .= '/' . $dirName;
+    $path = $_SESSION['path'].'/' . $dirName;
+
+    $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
+    if ($accessRigths === -1){
+        mysqli_close($mysql);
+        return false;
+    }
+
+    if (!is_dir($path)){
+        return false;
+    }
+    $_SESSION['path'] = $path;
     return true;
 }
 
@@ -283,4 +355,23 @@ function goBack($path){
         $_SESSION['path'] = $arr['newPath'];
         return true;
     }
+}
+
+function openUser($user){
+    $path = "localStorage/".$user;
+    if (!is_dir($path)){
+        return false;
+    }
+    $ini = parse_ini_file("database/mysql.ini");
+    $mysql = mysqli_connect($ini['host'], $ini['user'], $ini['password'], $ini['database']);
+
+    $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
+    if ($accessRigths === -1){
+        mysqli_close($mysql);
+        return false;
+    }
+
+    mysqli_close($mysql);
+    $_SESSION['path'] = $path;
+    return true;
 }

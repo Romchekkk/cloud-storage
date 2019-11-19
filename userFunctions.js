@@ -87,7 +87,6 @@ function deleteFile(fileName){
 }
 
 function downloadFile(fileName){
-    
     JsHttpRequest.query(
         'userFunctions.php',
         {
@@ -100,6 +99,52 @@ function downloadFile(fileName){
             link.setAttribute('href', result.href);
             link.setAttribute('download', fileName);
             link.click();
+        },
+        true
+    );
+}
+
+function openUser(user){
+    JsHttpRequest.query(
+        'userFunctions.php',
+        {
+            "action": 'openUser',
+            "user": user
+        },
+        function(result){
+            document.getElementById("window-bottom").innerHTML = result.window;
+            document.getElementById("path").innerHTML = result.path;
+        },
+        true
+    );
+}
+
+function changeRootDirMod(newMod){
+    JsHttpRequest.query(
+        'userFunctions.php',
+        {
+            "action": 'changeMod',
+            "isRoot": true,
+            "newMod": newMod
+        },
+        function(result){
+            document.getElementById("accessRootMod").value = result.newMod;
+        },
+        true
+    );
+}
+
+function changeMod(newMod, fileName){
+    JsHttpRequest.query(
+        'userFunctions.php',
+        {
+            "action": 'changeMod',
+            "isRoot": false,
+            "newMod": newMod,
+            "fileName": fileName
+        },
+        function(result){
+            document.getElementById("window-bottom").innerHTML = result.window;
         },
         true
     );
