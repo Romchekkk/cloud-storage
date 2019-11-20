@@ -1,0 +1,21 @@
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+actor_suffix: Tester
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+modules:  
+    enabled:
+        - Db:
+            dsn: 'mysql:host=localhost;dbname=cloudstoragedb'
+            user: 'root'
+            password: ''
+            populate: true
+            cleanup: true
+            dump: 'tests/_data/dump.sql'   
+    
+        
