@@ -7,4 +7,6 @@ modules:
     enabled:
         - Asserts
         - \Helper\Unit
+        - PhpBrowser:
+            url: http://jo.jo/cloud-storage
     step_decorators: ~        
