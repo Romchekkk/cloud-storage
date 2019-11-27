@@ -5,7 +5,9 @@ function search(){
             "forSearch": document.getElementById("search").value
         },
         function(result){
-            document.getElementById("usersList").innerHTML = result.usersList;
+            if (result.error == false){
+                document.getElementById("usersList").innerHTML = result.usersList;
+            }
         },
         true
     );
