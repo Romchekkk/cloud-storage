@@ -12,10 +12,10 @@ global $_RESULT;
 $mysql = new dataBase();
 if(!$mysql->isConnect()){
     $_RESULT["error"] = true;
-    die();
+    exit();
 }
 
-foreach (array('action', 'newMod', 'dirName', 'fileName', 'user', 'isRoot') as $parameterName) {
+foreach (array('action', 'newMod', 'dirName', 'fileName', 'user') as $parameterName) {
     $$parameterName = isset($_REQUEST[$parameterName])
         ? trim($_REQUEST[$parameterName])
         : "";
@@ -75,13 +75,10 @@ switch ($action) {
         exit();
 }
 
-if (!$user){
-    $user = $_SESSION['username'];
-}
-$_RESULT["window"] = newWindow($mysql, $path, $user);
+$_RESULT["window"] = newWindow($mysql, $path, $_SESSION['username']);
 $_RESULT["space"] = $_SESSION['availablespace'];
 
-function createDirectory($mysql, $path, $dirName){
+function createDirectory(&$mysql, $path, $dirName){
     $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
     if ($accessRigths !== 0){
         return false;
@@ -89,7 +86,7 @@ function createDirectory($mysql, $path, $dirName){
     $dir = $path . '/' . $dirName;
     if(!file_exists($dir)) {
         if (mkdir($dir)) {
-            $mysql->addToAccessrights($dir);
+            $mysql->addToAccessrights($dir, $_SESSION['username']);
             return true;
         }
         else{
@@ -99,7 +96,7 @@ function createDirectory($mysql, $path, $dirName){
     return false;
 }
 
-function deleteDirectory($mysql, $path, $dirName){
+function deleteDirectory(&$mysql, $path, $dirName){
     $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
     if ($accessRigths !== 0){
         return false;
@@ -107,7 +104,7 @@ function deleteDirectory($mysql, $path, $dirName){
     return removeDir("$path/$dirName", $mysql);
 }
 
-function uploadFile($mysql, $path){
+function uploadFile(&$mysql, $path){
     $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
     if ($accessRigths !== 0){
         return false;
@@ -121,14 +118,14 @@ function uploadFile($mysql, $path){
         return false;
     }
     elseif (move_uploaded_file($_FILES['file']['tmp_name'], $filePath)) {
-        $mysql->addToAccessrights($filePath);
+        $mysql->addToAccessrights($filePath, $_SESSION['username']);
         newAvailableSpace($size, "+", $_SESSION['username'], $mysql);
         return true;
     }
     return false;
 }
 
-function downloadFile($mysql, $path, $fileName){
+function downloadFile(&$mysql, $path, $fileName){
     $file = "$path/$fileName";
     if (!file_exists($file)){
         return false;
@@ -140,7 +137,7 @@ function downloadFile($mysql, $path, $fileName){
     return true;
 }
 
-function deleteFile($mysql, $path, $fileName){
+function deleteFile(&$mysql, $path, $fileName){
     $file = "$path/$fileName";
     if (!file_exists($file)){
         return false;
@@ -158,54 +155,7 @@ function deleteFile($mysql, $path, $fileName){
     return false;
 }
 
-function changeMod($mysql, $path, $fileName, $newMod, $isRoot, $usersArr = array()) {
-    $file = $isRoot
-        ? "localStorage/".$_SESSION['username']
-        : "$path/$fileName";
-    if (!file_exists($file)){
-        return false;
-    }
-    $accessRigths = checkAccessRights($mysql, $file, $_SESSION['username']);
-    if ($accessRigths !== 0){
-        return false;
-    }
-    $mysql->updateAccessRights($file, $newMod);
-    return true;
-    // $file = $path.'/'.$fileName;
-    // if ($mysql) {
-    //     if ($newMod == 1){
-    //         $sharedaccess = "";
-    //         foreach ($usersArr as $username) {
-    //             $userdata = getConcreteUser($mysql, "username", $username);
-    //             if ($userdata) {
-    //                 $sharedaccess .= $userdata['id']."/";
-    //             } 
-    //             else {
-    //                 return false;
-    //             }
-    //         }
-    //         if (!mysqli_query($mysql, "UPDATE `accessrights` SET `sharedaccess`='$sharedaccess', `accessmod`=$newMod WHERE path='$file'")){
-    //             return false;
-    //         }
-    //         else{
-    //             return true;
-    //         }
-    //     }
-    //     elseif($newMod == 0 || $newMod == 2){
-    //         if (!mysqli_query($mysql, "UPDATE `accessrights` SET `sharedaccess`='', `accessmod`=$newMod WHERE path='$file'")){
-    //             return false;
-    //         }
-    //         else{
-    //             return true;
-    //         }
-    //     }
-    // }
-    // else {
-    //     return false;
-    // }
-}
-
-function changeDirectory($mysql, $path, $dirName){
+function changeDirectory(&$mysql, $path, $dirName){
     $dir = "$path/$dirName";
     if (!is_dir($dir)){
         return false;
@@ -218,7 +168,7 @@ function changeDirectory($mysql, $path, $dirName){
     return true;
 }
 
-function goBack($path){
+function goBack(&$path){
     if (preg_match_all("/\//uis", $path) == 1) {
         return false;
     }
@@ -227,7 +177,7 @@ function goBack($path){
     return true;
 }
 
-function openUser($mysql, $user){
+function openUser(&$mysql, $user){
     $dir = "localStorage/".$user;
     if (!is_dir($dir)){
         return false;

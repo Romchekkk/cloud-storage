@@ -47,7 +47,7 @@ if ($action && $action == "Зарегистрироваться" && $username &&
         $password .= $secretKey;
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $mysql->addUser($username, $email, $passwordHash, $secretKey);
-        $mysql->addToAccessrights("localStorage/".$username);
+        $mysql->addToAccessrights("localStorage/".$username, $username);
         $forcoockie = $secretKey.$_SERVER['REMOTE_ADDR'];
         setcookie("cloudStorage", $email.':'.password_hash($forcoockie, PASSWORD_DEFAULT), time()+60*60*24);
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -100,7 +100,18 @@ else{
     $usersArr = array();
     $usersArr = $mysql->getUsers();
     $usernameHTML = $_SESSION['username'];
-    $rootAccessMod = $mysql->getAccessrights("localStorage/$usernameHTML");
+    $accessRootMod = $mysql->getAccessrights("localStorage/$usernameHTML");
+    switch ($accessRootMod) {
+        case 0:
+            $accessRootMod = "Частный(Доступ есть только у вас)";
+            break;
+        case 1:
+            $accessRootMod = "Разделяемый(Доступ есть у выделенной группы пользователей)";
+            break;
+        case 2:
+            $accessRootMod = "Общий(Доступ есть у всех пользователей)";
+            break;
+    }
     $menuHTML = "<td>
     Доступно места: <span id=\"availablespace\">".$_SESSION['availablespace']."</span> байт<br />
     <input type=\"button\" value=\"Назад\" onclick=\"goBack()\" /><br />
@@ -108,8 +119,8 @@ else{
     </td>
     <td>
         Уровень доступа к вашей<br />
-        корневой папке: <form><input type=\"text\" id=\"accessRootMod\" disabled=\"disabled\" name=\"accessmod\" value=\"$rootAccessMod\" />
-        <input type=\"button\" value=\"Изменить\" onclick=\"changeRootDirMod(this.form.accessmod.value)\"></form>
+        корневой папке: <form><span id=\"accessRootMod\">$accessRootMod</span>
+        <input type=\"button\" value=\"Изменить\" onclick=\"show('$usernameHTML', true)\"></form>
     </td>
     <td>
         <input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" />

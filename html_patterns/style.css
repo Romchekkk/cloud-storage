@@ -27,13 +27,14 @@ img{width: 100px; height: 100px;}
 
 #window-bottom{height: 100%; border: 1px solid black; vertical-align: top;}
 .directory{width: 100px; height: 100px; padding: 50px; float: left; position: relative;}
+.directory img{cursor: pointer;}
 .file{width: 100px; height: 100px; padding: 50px; float: left; position: relative;}
 .hide{display: none;; position: absolute; top: 20px; right: 0px;}
 div:hover .hide{display: block;}
 
-.changeMod{background-color: gray; border-radius: 10px; width: 20px;}
-.download{background-image: url("../images/download.png"); background-size: 100%; border-radius: 10px; width: 20px;}
-.delete{background-image: url("../images/delete.png"); background-size: 100%;  width: 20px;}
+.changeMod{background-image: url("../images/changeMod.png"); background-repeat: no-repeat; background-size: 100%; border: none; width: 20px; height: 20px;}
+.download{background-image: url("../images/download.png"); background-repeat: no-repeat; background-size: 100%; border: none; width: 20px; height: 20px;}
+.delete{background-image: url("../images/delete.png"); background-repeat: no-repeat; background-size: 100%; border: none; width: 20px; height: 20px;}
 
 #users{height: 100%; width: 100%; background: #dadada; border-spacing: 10px;}
 #users>tbody>tr:first-child{height: 30px;}
@@ -52,3 +53,7 @@ div:hover .hide{display: block;}
 .reglog{margin: 5px 0px; width: 80%; padding: 5px; border: 1px solid black; border-radius: 5px;}
 #regForm>input[type="submit"]{margin: 5px 0px; width: 83%; padding: 5px;}
 #loginForm>input[type="submit"]{margin: 5px 0px; width: 83%; padding: 5px;}
+
+#closeChangeAccessRights{position: absolute; top: 10px; right: 10px;}
+#changeAccessRights-hide{display: none;}
+#changeAccessRights-visible{display: block; border: 1px solid black; background: gray; width: 500px; height: 500px; position:absolute; top:50%; left:50%; margin:-250px 0 0 -250px;}

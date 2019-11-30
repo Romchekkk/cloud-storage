@@ -69,17 +69,12 @@ class dataBase{
         mysqli_query($this->_mysql, "UPDATE `users` SET `availablespace`='$availablespace' WHERE `username`='$username'");
     }
     
-    public function addToAccessrights($path){
-        $owner = $_SESSION['username'];
+    public function addToAccessrights($path, $owner){
         mysqli_query($this->_mysql, "INSERT INTO `accessrights`(`path`, `owner`) VALUES ('$path', '$owner')");
-        return true;
     }
 
     public function removeFromAccessrights($path){
-        if (mysqli_query($this->_mysql, "DELETE FROM `accessrights` WHERE path='$path'")){
-            return true;
-        }
-        return false;
+        mysqli_query($this->_mysql, "DELETE FROM `accessrights` WHERE path='$path'");
     }
 
     public function getAccessrights($path){
@@ -95,7 +90,7 @@ class dataBase{
         return mysqli_fetch_array($result);
     }
 
-    public function updateAccessRights($path, $newMod, $sharedaccess = ''){
-        mysqli_query($this->_mysql, "UPDATE `accessrights` SET `sharedaccess`=$sharedaccess, `accessmod`=$newMod WHERE path='$path'");
+    public function updateAccessRights($path, $newMod, $sharedaccess){
+        mysqli_query($this->_mysql, "UPDATE `accessrights` SET `sharedaccess`='$sharedaccess', `accessmod`=$newMod WHERE path='$path'");
     }
 }

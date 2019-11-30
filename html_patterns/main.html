@@ -10,6 +10,7 @@
         <script src="JsHttpRequest/JsHttpRequest.js"></script>
         <script src="userFunctions.js"></script>
         <script src="search.js"></script>
+        <script src="changeAccessRights.js"></script>
     </head>
     <body>
         <table id="header">
@@ -72,5 +73,11 @@
                 </tr>
             </tbody>
         </table>
+        <div id="changeAccessRights-hide">
+            <input id="closeChangeAccessRights" type="button" value="X" onclick="hide()">
+            <p>Измениние прав доступа к<br /><span id="filename"></span></p><br />
+            <p>Текущий режим доступа:<br /><span id="fileAccessMod">Частный(Доступ есть только у вас)</span></p><br />
+            <input type="button" id="firstVar" onclick="changeMod(this.value, false)" /><input type="button" id="secondVar" onclick="changeMod(this.value, false)" />
+        </div>
     </body>
 </html>

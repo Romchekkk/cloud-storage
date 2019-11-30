@@ -4,52 +4,56 @@ require_once "dataBaseClass.php";
 
 session_start();
 
-function newWindow($mysql, $path, $username){
+function newWindow(&$mysql, $path, $username){
     $htmldir = "";
     $htmlfile = "";
     $files = glob($path."/*");
     foreach($files as $filename){
         $nameFile = basename($filename);
         if (is_dir($filename)){
-            $htmldir .= "<div class=\"directory\">";
             $accessRights = checkAccessRights($mysql, $filename, $username);
             if($accessRights === 0){
-                $htmldir .= "<div class=\"hide\">
-                                <input class=\"changeMod\" type=\"button\" value=\"".$mysql->getAccessrights($filename)."\" onclick=\"changeMod(this.value, '".preg_replace("/'/uis", "\'", $nameFile)."')\" />
-                                <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
-                             </div>
+                $htmldir .= "<div class=\"directory\">
+                                <div class=\"hide\">
+                                    <input class=\"changeMod\" type=\"button\" value=\"&nbsp;\" onclick=\"show('".preg_replace("/'/uis", "\'", $nameFile)."', false)\" />
+                                    <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
+                                </div>
                             <img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />$nameFile
                         </div>";
             }
             elseif($accessRights === 1 || $accessRights === 2){
-                $htmldir .= "<img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />$nameFile</div>";
+                $htmldir .= "<div class=\"directory\">
+                <img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />$nameFile
+                </div>";
             }
         }
         else {
-            $htmlfile .= "<div class=\"file\">";
+            $htmlfile .= "";
             $accessRights = checkAccessRights($mysql, $filename, $username);
             if($accessRights === 0){
-                $htmlfile .= "<div class=\"hide\">
-                                <input class=\"changeMod\" type=\"button\" value=\"".$mysql->getAccessrights($filename)."\" onclick=\"changeMod(this.value, '".preg_replace("/'/uis", "\'", $nameFile)."')\" />
-                                <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
-                                <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
-                              </div>
+                $htmlfile .= "<div class=\"file\">
+                                <div class=\"hide\">
+                                    <input class=\"changeMod\" type=\"button\" value=\"&nbsp;\" onclick=\"show('".preg_replace("/'/uis", "\'", $nameFile)."', false)\" />
+                                    <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
+                                    <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
+                                </div>
                             <img src=\"images/file.png\" />$nameFile
                         </div>";
             }
             elseif($accessRights === 1 || $accessRights === 2){
-                $htmlfile .= "<div class=\"hide\">
-                                <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
-                              </div>
-                            <img src=\"images/file.png\" />$nameFile
-                        </div>";
+                $htmlfile .= "<div class=\"file\">
+                                <div class=\"hide\">
+                                    <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
+                                </div>
+                                <img src=\"images/file.png\" />$nameFile
+                            </div>";
             }
         }
     }
     return $htmldir.$htmlfile;
 }
 
-function removeDir($path, $mysql){
+function removeDir($path, &$mysql){
     foreach (glob($path . '/*') as $file) {
         if (is_dir($file)) {
             if (removeDir($file, $mysql)){
@@ -63,7 +67,7 @@ function removeDir($path, $mysql){
             $size = filesize($file);
             if (unlink($file)) {
                 newAvailableSpace($size, "-", $_SESSION['username'], $mysql);
-                removeFromAccessrights($mysql, $file);
+                $mysql->removeFromAccessrights($file);
                 continue;
             }
             else{
@@ -78,7 +82,7 @@ function removeDir($path, $mysql){
     return false;
 }
 
-function newAvailableSpace($size, $sign, $username, $mysql){
+function newAvailableSpace($size, $sign, $username, &$mysql){
     $user = $mysql->getParticularUser("username", $username);
     $availablespace = 0;
     if ($sign == "+"){
@@ -92,7 +96,7 @@ function newAvailableSpace($size, $sign, $username, $mysql){
     return true;
 }
 
-function checkCoockie($mysql){
+function checkCoockie(&$mysql){
     if (isset($_COOKIE["cloudStorage"])){
         $coockieArr = explode(":", $_COOKIE["cloudStorage"]);
         $email = $coockieArr[0];
@@ -116,7 +120,7 @@ function checkCoockie($mysql){
     return false;
 }
 
-function checkAccessRights($mysql, $path, $username){
+function checkAccessRights(&$mysql, $path, $username){
     $fileAccessInfo = $mysql->getOwner($path);
     $accessmod = $fileAccessInfo['accessmod'];
     if ($fileAccessInfo['owner'] == $username) {

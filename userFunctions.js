@@ -118,34 +118,3 @@ function openUser(user){
         true
     );
 }
-
-function changeRootDirMod(newMod){
-    JsHttpRequest.query(
-        'userFunctions.php',
-        {
-            "action": 'changeMod',
-            "isRoot": true,
-            "newMod": newMod
-        },
-        function(result){
-            document.getElementById("accessRootMod").value = result.newMod;
-        },
-        true
-    );
-}
-
-function changeMod(newMod, fileName){
-    JsHttpRequest.query(
-        'userFunctions.php',
-        {
-            "action": 'changeMod',
-            "isRoot": false,
-            "newMod": newMod,
-            "fileName": fileName
-        },
-        function(result){
-            document.getElementById("window-bottom").innerHTML = result.window;
-        },
-        true
-    );
-}
