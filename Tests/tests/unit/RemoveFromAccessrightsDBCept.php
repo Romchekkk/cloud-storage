@@ -1,12 +1,12 @@
 <?php 
 require_once("../dataBaseClass.php");
 $I = new UnitTester($scenario);
-$I->wantTo('remove user from accessrights in DB');
+$I->wantTo('get accessrights for certain file from DB');
 $mysql = new dataBase();
 
-//проверяем режим для конкретного файла
-$I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce', 'owner' => 'nukce', 'accessmod' => '2'));
+//проверяем владельца конретного файла 
+$I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce', 'owner' => 'nukce'));
 
-//получаем режим доступа и проверяем его
-$mod = $mysql->getAccessrights('localStorage/nukce');
-$I->assertEquals('2', $mod);
+//удаляем владельца конкретного файла и проверяем его отсутсвие
+$mysql->removeFromAccessrights('localStorage/nukce');
+$I->dontSeeInDatabase ('accessrights', array ('path' => 'localStorage/nukce', 'owner' => 'nukce'));
