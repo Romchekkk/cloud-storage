@@ -121,7 +121,7 @@ function checkCoockie(&$mysql){
 }
 
 function checkAccessRights(&$mysql, $path, $username){
-    $fileAccessInfo = $mysql->getOwner($path);
+    $fileAccessInfo = $mysql->getFileAccessInfo($path);
     $accessmod = $fileAccessInfo['accessmod'];
     if ($fileAccessInfo['owner'] == $username) {
         return 0;

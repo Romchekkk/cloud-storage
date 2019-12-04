@@ -77,7 +77,7 @@ class dataBase{
         mysqli_query($this->_mysql, "DELETE FROM `accessrights` WHERE path='$path'");
     }
 
-    public function getAccessrights($path){
+    public function getAccessmod($path){
         if ($result = mysqli_query($this->_mysql, "SELECT `accessmod` FROM `accessrights` WHERE path='$path'")) {
             $accessmod = mysqli_fetch_array($result)['accessmod'];
             return $accessmod;
@@ -85,7 +85,7 @@ class dataBase{
         return false;
     }
 
-    public function getOwner($path){
+    public function getFileAccessInfo($path){
         $result = mysqli_query($this->_mysql, "SELECT * FROM `accessrights` WHERE path='$path'");
         return mysqli_fetch_array($result);
     }

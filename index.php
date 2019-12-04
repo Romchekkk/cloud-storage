@@ -100,7 +100,7 @@ else{
     $usersArr = array();
     $usersArr = $mysql->getUsers();
     $usernameHTML = $_SESSION['username'];
-    $accessRootMod = $mysql->getAccessrights("localStorage/$usernameHTML");
+    $accessRootMod = $mysql->getAccessmod("localStorage/$usernameHTML");
     switch ($accessRootMod) {
         case 0:
             $accessRootMod = "Частный(Доступ есть только у вас)";
