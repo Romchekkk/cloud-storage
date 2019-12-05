@@ -82,16 +82,31 @@ if(!checkCoockie($mysql)){
     $html = file_get_contents("html_patterns/reg.html");
     $formHTML = "<div id=\"regForm\">
     <form action=\"\" method=\"post\">
-        <p>Регистрация</p>
+        <table>
+            <tbody>
+                <tr>
+                    <td colspan=\"2\">
         <p id=\"error\">";
     $formHTML .= isset($_SESSION['error'])
         ? $_SESSION['error']
         : "";
     $formHTML .= "</p>
-        <input class=\"reglog\" type=\"text\" name=\"username\" placeholder=\"Имя пользователя\" /><br />
-        <input class=\"reglog\" required=\"required\" type=\"email\" name=\"email\" placeholder=\"Адрес электронной почты\" /><br />
-        <input class=\"reglog\" required=\"required\" type=\"password\" name=\"password\" placeholder=\"Пароль\" /><br />
-        <input type=\"submit\" name=\"action\" value=\"Зарегистрироваться\" /><input type=\"submit\" name=\"action\" value=\"Войти\" />
+                        <input class=\"reglog\" required=\"required\" type=\"text\" name=\"username\" placeholder=\"Имя пользователя\" /><br />
+                        <input class=\"reglog\" required=\"required\" type=\"email\" name=\"email\" placeholder=\"Адрес электронной почты\" /><br />
+                        <input class=\"reglog\" required=\"required\" type=\"password\" name=\"password\" placeholder=\"Пароль\" /><br />
+                        <input id=\"regAuth\" type=\"submit\" value=\"Зарегистрироваться\" name=\"action\" />
+                    </td>
+                </tr>
+                <tr>
+                    <td id=\"reg\" onclick=\"setReg()\">
+                        <p>Регистрация</p>
+                    </td>
+                    <td id=\"auth\" onclick=\"setAuth()\">
+                        <p>Авторизация</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </form>
 </div>";
     $html = preg_replace("/formHTML/uis", $formHTML, $html);

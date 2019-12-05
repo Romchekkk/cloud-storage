@@ -1,23 +1,37 @@
 *{padding: 0px; text-align: center; margin: 0px;}
-
 html{height: 100%;}
 body{height: 100%;}
 input[type="button"]{border-radius: 5px; cursor: pointer;  text-align: center; padding: 0px 5px;}
 input[type="submit"]{border-radius: 5px; cursor: pointer;  text-align: center; padding: 0px 5px;}
 img{width: 100px; height: 100px;}
 
+/*Верхняя часть окна браузера*/
 #header{width: 100%; height: 10%; background-color: #8e898a; font-size: 20px;}
 #header>tbody>tr>td:first-child{width: 50%; text-align: left; padding-left: 20px;}
 #header>tbody>tr>td:last-child{width: 50%; position: relative; text-align: right; padding-right: 20px;}
 #header>tbody>tr>td:last-child>form{position: absolute; right: 30px; top: 40%;}
 
-
+/*Область, занимаемая оставшейся частью окна браузера*/
 #main{width: 100%; height: 90%;}
 #main>tbody>tr>td:first-child{width: 80%;}
 #main>tbody>tr>td:last-child{width: 20%;}
 
+/*Форма регистрации или авторизации*/
+#regForm{width: 350px; height: 250px; position:absolute; top:50%; left:50%; margin: -100px 0 0 -175px;}
+#regForm table{width: 100%; height: 100%; border-spacing: 0px;}
+#regForm table>tbody>tr:first-child{height: 210px; }
+#regForm table>tbody>tr:first-child>td{background-color: gray; border: 1px solid black; border-bottom: none; border-top-left-radius: 10px; border-top-right-radius: 10px;}
+#regForm table>tbody>tr:last-child{height: 40px;}
+#regForm table>tbody>tr:last-child>td{background-color: gray; width: 50%; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; border: 1px solid black;}
+#regForm table>tbody>tr:last-child>td:first-child{border-right: 0.5px solid black; border-top: none;}
+#regForm table>tbody>tr:last-child>td:last-child{border-left: 0.5px solid black; border-top: 1px solid black;}
+#regForm table>tbody>tr:last-child>td{cursor: pointer;}
+#regForm input{width: 90%; height: 30px; margin: 5px 0 5px 0; border-radius: 10px;}
 
+/*Часть окна браузера, занимаемая меню пользователя и его файловой системы*/
 #window{width: 100%; height: 100%;}
+
+/*Меню пользователя(количество свободного места, путь, право доступа, создание папки и загрузка файлов)*/
 #window-top{width: 100%; background: #707070; height: 50px;}
 #window-top>tbody>tr>td:first-child{text-align: left; width: 50%; font-size: 25px; padding-left: 10px;}
 #window-top>tbody>tr>td:nth-child(2){text-align: center; width: 25%;}
@@ -25,35 +39,29 @@ img{width: 100px; height: 100px;}
 #window-top>tbody>tr>td:nth-child(3){text-align: center; width: 25%;}
 #window-top>tbody>tr>td:nth-child(3)>input{height: 30px; font-size: 20px;}
 
+/*Файловая система пользователя*/
 #window-bottom{height: 100%; border: 1px solid black; vertical-align: top;}
 .directory{width: 100px; height: 100px; padding: 50px; float: left; position: relative;}
 .directory img{cursor: pointer;}
 .file{width: 100px; height: 100px; padding: 50px; float: left; position: relative;}
 .hide{display: none;; position: absolute; top: 20px; right: 0px;}
 div:hover .hide{display: block;}
-
 .changeMod{background-image: url("../images/changeMod.png"); background-repeat: no-repeat; background-size: 100%; border: none; width: 20px; height: 20px;}
 .download{background-image: url("../images/download.png"); background-repeat: no-repeat; background-size: 100%; border: none; width: 20px; height: 20px;}
 .delete{background-image: url("../images/delete.png"); background-repeat: no-repeat; background-size: 100%; border: none; width: 20px; height: 20px;}
 
+/*Список всех зарегистрированных пользователей и поиск по ним*/
 #users{height: 100%; width: 100%; background: #dadada; border-spacing: 10px;}
 #users>tbody>tr:first-child{height: 30px;}
 #users>tbody>tr:first-child input{width: 80%; height: 30px;}
 #users>tbody>tr:nth-child(2)>td{height: 90%; position: relative; border: 1px solid black; background: white; overflow: hidden;}
 #usersList{position: absolute; top: 0px;}
 #usersList>li{text-align: left; padding: 10px 0px 0px 10px; font-size: 30px; list-style-type: none;}
-
 .open>input{color: green; border: none; background: none; font-size: larger;}
 .close>input{color: red; border: none; background: none; font-size: larger;}
 
-#regForm{border: 1px solid black; border-radius: 10px; margin-left:40%; margin-right: 40%; height:200px; background-color: gray;}
-#regForm p{margin: 5px 0px;}
-#loginForm{border: 1px solid black; border-radius: 10px; margin-left:40%; margin-right: 40%; height:160px; background-color: gray;}
-#loginForm p{margin: 5px 0px;}
-.reglog{margin: 5px 0px; width: 80%; padding: 5px; border: 1px solid black; border-radius: 5px;}
-#regForm>input[type="submit"]{margin: 5px 0px; width: 83%; padding: 5px;}
-#loginForm>input[type="submit"]{margin: 5px 0px; width: 83%; padding: 5px;}
-
+/*Менюшка изменения прав доступа*/
+#closingWindow{position: absolute; top: 0px; width: 100%; height: 100%; background-color: black; opacity: 0%; z-index: -1;}
 #closeChangeAccessRights{position: absolute; top: 10px; right: 10px;}
 #changeAccessRights-hide{display: none;}
-#changeAccessRights-visible{display: block; border: 1px solid black; background: gray; width: 500px; height: 500px; position:absolute; top:50%; left:50%; margin:-250px 0 0 -250px;}
+#changeAccessRights-visible{padding: 10px; display: block; border: 1px solid black; background: rgb(185, 184, 184); width: 500px; height: 500px; position:absolute; z-index: 2 !important; top:50%; left:50%; margin:-250px 0 0 -250px;}

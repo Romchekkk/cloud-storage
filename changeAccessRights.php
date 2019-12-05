@@ -47,7 +47,7 @@ if ($action && $action == "changeAccessRights"){
     $mysql->updateAccessRights($file, $newMod, $sharedaccess);
 }
 
-$mod = $mysql->getAccessRights($file);
+$mod = $mysql->getAccessmod($file);
 if ($mod == 0){
     $_RESULT["mod_active"] = "Частный(Доступ есть только у вас)";
     $_RESULT["mod_firstVar"] = "Разделяемый";

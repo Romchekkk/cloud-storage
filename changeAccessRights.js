@@ -21,6 +21,8 @@ function show(filename, isRoot){
                     secondVar.setAttribute('onclick', 'changeMod(this.value, false)');
                 }
                 document.getElementById("filename").innerHTML = filename;
+                document.getElementById("closingWindow").style.opacity = "75%";
+                document.getElementById("closingWindow").style.zIndex = "1";
                 document.getElementById("changeAccessRights-hide").id = "changeAccessRights-visible";
             }
         },
@@ -31,6 +33,8 @@ function show(filename, isRoot){
 function hide(){
     document.getElementById("filename").innerHTML = "";
     document.getElementById("changeAccessRights-visible").id = "changeAccessRights-hide";
+    document.getElementById("closingWindow").style.opacity = "0%";
+    document.getElementById("closingWindow").style.zIndex = "-1";
 }
 
 function changeMod(newMod, isRoot){
