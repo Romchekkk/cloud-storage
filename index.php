@@ -1,21 +1,26 @@
 <?php
 
+//Файл содержит генерацию всей страницы браузера
+
 require_once "additionalFunctions.php";
 require_once "dataBaseClass.php";
 
 session_start();
 
+//Создание объекта базы данных и проверка на успешность этого создания
 $mysql = new dataBase();
 if(!$mysql->isConnect()){
     die("Возникла ошибка во время выполнения. Попробуйте обновить страницу.");
 }
 
+//Сбор полученных данных
 foreach(array('action', 'username', 'email', 'password') as $parameterName){
     $$parameterName = isset($_POST[$parameterName])
     ? trim($_POST[$parameterName])
     : "";
 }
 
+//Если пользователь хочет разлогиниться
 if ($action && $action == "Выйти"){
     session_destroy();
     $_SESSION = array();
@@ -24,8 +29,13 @@ if ($action && $action == "Выйти"){
     die();
 }
 
+//Если пользователь хочет зарегистрироваться
 if ($action && $action == "Зарегистрироваться" && $username && $email && $password){
+    
+    //Проверка имени пользователя на корректность
     if (preg_match("/^[a-z0-9]{3,25}$/uis", $username)){
+
+        //Проверка на наличие уже зарегистрированных пользователей с указанными адресом почты или имени пользователя
         $usersArr = $mysql->getUsers();
         foreach ($usersArr as $user) { 
             if ($user['username'] == $username){
@@ -39,6 +49,8 @@ if ($action && $action == "Зарегистрироваться" && $username &&
                 die();
             }
         }
+
+        //Успешная регистрация
         $_SESSION['username'] = $username;
         $_SESSION['path'] = "localStorage/".$username;
         $_SESSION['availablespace'] = 104857600;
@@ -55,9 +67,12 @@ if ($action && $action == "Зарегистрироваться" && $username &&
     }
 }
 
+//Если пользователь хочет авторизоваться
 if ($action && $action == "Войти" && $email && $password){
     $user = $mysql->getParticularUser("email", $email);
     $passwordCheck = $password.$user['secretkey'];
+
+    //Проверка правильности введенного пароля
     if (password_verify($passwordCheck, $user["password"])){
         $secretKey = uniqid();
         $newPassword = $password.$secretKey;
@@ -78,7 +93,10 @@ if ($action && $action == "Войти" && $email && $password){
     }
 }
 
+//Проверка наличия куки и его корректности
 if(!checkCoockie($mysql)){
+    
+    //Форма регистрации, если куки не прошло проверку
     $html = file_get_contents("html_patterns/reg.html");
     $formHTML = "<div id=\"regForm\">
     <form action=\"\" method=\"post\">
@@ -112,6 +130,8 @@ if(!checkCoockie($mysql)){
     $html = preg_replace("/formHTML/uis", $formHTML, $html);
 }
 else{
+
+    //Функционал сайта, если куки прошло проверку
     $usersArr = array();
     $usersArr = $mysql->getUsers();
     $usernameHTML = $_SESSION['username'];
@@ -148,6 +168,8 @@ else{
     $windowHTML = newWindow($mysql, $_SESSION['path'], $_SESSION['username']);
     $usersHTML = "";
     $i = 0;
+
+    //Первый 15 пользователей из базы данных
     foreach($usersArr as $user){
         if ($i == 15){
             break;

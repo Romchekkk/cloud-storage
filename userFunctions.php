@@ -7,27 +7,24 @@ require_once "dataBaseClass.php";
 session_start();
 
 $js = new JsHttpRequest("utf-8");
-
 global $_RESULT;
+
+//Создание объекта базы данных и проверка на успешность этого создания
 $mysql = new dataBase();
 if(!$mysql->isConnect()){
     $_RESULT["error"] = true;
     exit();
 }
 
+//Сбор полученных данных
 foreach (array('action', 'newMod', 'dirName', 'fileName', 'user') as $parameterName) {
     $$parameterName = isset($_REQUEST[$parameterName])
         ? trim($_REQUEST[$parameterName])
         : "";
 }
 
-if($newMod !== ""){
-    $newMod += 1;
-    $newMod %= 3;
-}
-
+//Обработка полученных данных
 $path = $_SESSION['path'];
-
 switch ($action) {
     case "changeMod":
         if ($action($mysql, $path, $fileName, $newMod, $isRoot, $usersArr)){
@@ -75,9 +72,19 @@ switch ($action) {
         exit();
 }
 
+//Подготовка результирующих данных
 $_RESULT["window"] = newWindow($mysql, $path, $_SESSION['username']);
 $_RESULT["space"] = $_SESSION['availablespace'];
 
+/**
+ * Создание директории.
+ *
+ * @param [dataBase] $mysql - объект базы данных.
+ * @param [string] $path - путь к директории, в которой будет создана новая директория.
+ * @param [string] $dirName - имя новой директории.
+ * @return bool - true, если директория успешно создана;
+ * - false, в противном случае.
+ */
 function createDirectory(&$mysql, $path, $dirName){
     $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
     if ($accessRigths !== 0){
@@ -96,6 +103,15 @@ function createDirectory(&$mysql, $path, $dirName){
     return false;
 }
 
+/**
+ * Удаление директории.
+ *
+ * @param [dataBase] $mysql - объект базы данных.
+ * @param [string] $path - путь к директории, в которой будет удалена указанная директория.
+ * @param [string] $dirName - имя удаляемой директории.
+ * @return bool - true, если директория удалена;
+ * false, в противном случае.
+ */
 function deleteDirectory(&$mysql, $path, $dirName){
     $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
     if ($accessRigths !== 0){
@@ -104,6 +120,14 @@ function deleteDirectory(&$mysql, $path, $dirName){
     return removeDir("$path/$dirName", $mysql);
 }
 
+/**
+ * Загрузка файла.
+ *
+ * @param [dataBase] $mysql - объект базы данных.
+ * @param [string] $path - путь к директории, куда будет загружен файл.
+ * @return bool - true, если файл успешно загружен;
+ * - false, в противном случае.
+ */
 function uploadFile(&$mysql, $path){
     $accessRigths = checkAccessRights($mysql, $path, $_SESSION['username']);
     if ($accessRigths !== 0){
@@ -125,6 +149,15 @@ function uploadFile(&$mysql, $path){
     return false;
 }
 
+/**
+ * Досту на скачивание файла.
+ *
+ * @param [dataBase] $mysql - объект базы данных.
+ * @param [string] $path - путь к директории, в которой находится скачиваемый файл.
+ * @param [string] $fileName - имя скачиваемого файла.
+ * @return bool - true, если доступ на скачивание есть;
+ * - false, в противном случае.
+ */
 function downloadFile(&$mysql, $path, $fileName){
     $file = "$path/$fileName";
     if (!file_exists($file)){
@@ -137,6 +170,15 @@ function downloadFile(&$mysql, $path, $fileName){
     return true;
 }
 
+/**
+ * Удаление файла.
+ *
+ * @param [dataBase] $mysql - объект базы данных.
+ * @param [string] $path - путь к директории, в которой будет удален файл.
+ * @param [string] $fileName - имя удаляемого файла.
+ * @return bool - true, если файл удален;
+ * - false, в противном случае.
+ */
 function deleteFile(&$mysql, $path, $fileName){
     $file = "$path/$fileName";
     if (!file_exists($file)){
@@ -155,6 +197,15 @@ function deleteFile(&$mysql, $path, $fileName){
     return false;
 }
 
+/**
+ * Переход в директорию.
+ *
+ * @param [dataBase] $mysql - объект базы данных.
+ * @param [string] $path - путь к директории, в которой находится директория, в которую собираются перейти.
+ * @param [string] $dirName - имя директории, в которую собираются перейти.
+ * @return bool - true, если переход успешно совершен;
+ * - false, в противном случаеы.
+ */
 function changeDirectory(&$mysql, $path, $dirName){
     $dir = "$path/$dirName";
     if (!is_dir($dir)){
@@ -168,7 +219,14 @@ function changeDirectory(&$mysql, $path, $dirName){
     return true;
 }
 
-function goBack(&$path){
+/**
+ * Возврат к предыдущей директории.
+ *
+ * @param [string] $path - путь к директории, из которой собираются вернуться.
+ * @return bool - true, если переход успешно совершен;
+ * - false, в противном случае.
+ */
+function goBack($path){
     if (preg_match_all("/\//uis", $path) == 1) {
         return false;
     }
@@ -177,6 +235,14 @@ function goBack(&$path){
     return true;
 }
 
+/**
+ * Открытие корневой директории пользователя.
+ *
+ * @param [dataBase] $mysql - объект базы данных.
+ * @param [string] $user - имя пользователя, в директорию которого собираются перейти.
+ * @return bool - true, если переход успешно совершен;
+ * - false, в противном случае.
+ */
 function openUser(&$mysql, $user){
     $dir = "localStorage/".$user;
     if (!is_dir($dir)){
