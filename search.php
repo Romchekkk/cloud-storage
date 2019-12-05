@@ -14,19 +14,21 @@ if(!$mysql->isConnect()){
     $_RESULT["error"] = true;
     die();
 }
+
 $forSearch = isset($_REQUEST['forSearch'])
     ? trim($_REQUEST['forSearch'])
     : "";
+    
 $usersList = "";
 $usersArr = $mysql->getUsersForSearch($forSearch);
 foreach($usersArr as $user){
     $accessRights = checkAccessRights($mysql, "localStorage/".$user['username'], $_SESSION['username']);
     if($accessRights === 0 || $accessRights === 1 || $accessRights === 2){
-        $usersHTML .= "<li class=\"open\"><input type=\"button\" value=\"".$user['username']."\" onclick=\"openUser(this.value)\" /></li>";
+        $usersList .= "<li class=\"open\"><input type=\"button\" value=\"".$user['username']."\" onclick=\"openUser(this.value)\" /></li>";
     }
     else{
-        $usersHTML .= "<li class=\"close\">".$user['username']."</li>";
+        $usersList .= "<li class=\"close\">".$user['username']."</li>";
     }
 }
 $_RESULT["error"] = false;
-$_RESULT['usersList'] = $usersHTML;
+$_RESULT['usersList'] = $usersList;

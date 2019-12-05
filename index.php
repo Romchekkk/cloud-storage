@@ -138,7 +138,7 @@ else{
         <input type=\"button\" value=\"Изменить\" onclick=\"show('$usernameHTML', true)\"></form>
     </td>
     <td>
-        <input type=\"text\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" />
+        <input type=\"text\" placeholder=\"Введите имя папки\" id=\"dirName\" /><input type=\"button\" value=\"Создать директорию\" onclick=\"createDirectory()\" />
     </td>
     <td>
         <form method=\"post\" enctype=\"multipart/form-data\">

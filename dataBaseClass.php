@@ -91,6 +91,12 @@ class dataBase{
     }
 
     public function updateAccessRights($path, $newMod, $sharedaccess){
+        if ($sharedaccess == "-1"){
+            $sharedaccess = $this->getFileAccessInfo($path)['sharedaccess'];
+        }
+        if ($newMod == -1){
+            $newMod = $this->getFileAccessInfo($path)['accessmod'];
+        }
         mysqli_query($this->_mysql, "UPDATE `accessrights` SET `sharedaccess`='$sharedaccess', `accessmod`=$newMod WHERE path='$path'");
     }
 }

@@ -15,7 +15,7 @@ if(!$mysql->isConnect()){
     exit();
 }
 
-foreach (array('action', 'newMod', 'filename', 'isRoot', 'sharedaccess') as $parameterName) {
+foreach (array('action', 'newMod', 'filename', 'isRoot', 'username') as $parameterName) {
     $$parameterName = isset($_REQUEST[$parameterName])
         ? trim($_REQUEST[$parameterName])
         : "";
@@ -28,6 +28,7 @@ if (!file_exists($file)){
     $_RESULT["error"] = true;
     exit();
 }
+
 $accessRigths = checkAccessRights($mysql, $file, $_SESSION['username']);
 if ($accessRigths !== 0){
     $_RESULT["error"] = true;
@@ -44,7 +45,20 @@ elseif ($newMod && $newMod == "Общий") {
     $newMod = 2;
 }
 if ($action && $action == "changeAccessRights"){
-    $mysql->updateAccessRights($file, $newMod, $sharedaccess);
+    $mysql->updateAccessRights($file, $newMod, "-1");
+}
+if ($action && $action == "addToSharedAccess"){
+    $sharedaccess = $mysql->getFileAccessInfo($file)['sharedaccess'];
+    $id = $mysql->getUserId($username);
+    if (preg_match("/\/$id\//", $sharedaccess)){
+        $shArr = explode("/$id/", $sharedaccess, 2);
+        $sharedaccess = $shArr[0]. $shArr[1];
+    }
+    else{
+        $sharedaccess .= "/$id/";
+    }
+    $mysql->updateAccessRights($file, -1, $sharedaccess);
+    exit();
 }
 
 $mod = $mysql->getAccessmod($file);

@@ -64,4 +64,9 @@ div:hover .hide{display: block;}
 #closingWindow{position: absolute; top: 0px; width: 100%; height: 100%; background-color: black; opacity: 0%; z-index: -1;}
 #closeChangeAccessRights{position: absolute; top: 10px; right: 10px;}
 #changeAccessRights-hide{display: none;}
-#changeAccessRights-visible{padding: 10px; display: block; border: 1px solid black; background: rgb(185, 184, 184); width: 500px; height: 500px; position:absolute; z-index: 2 !important; top:50%; left:50%; margin:-250px 0 0 -250px;}
+#changeAccessRights-visible{padding: 10px; display: block; border-radius: 10px; border: 1px solid black; background: rgb(185, 184, 184); width: 500px; height: 500px; position:absolute; z-index: 2 !important; top:50%; left:50%; margin:-250px 0 0 -250px;}
+#usersList-accessRights-hide{display: none;}
+#usersList-accessRights-visible{width: 100%;}
+#usersList-accessRights>table{margin-left: 150px;}
+#usersList-accessRights>table>tbody>tr>td:last-child{text-align: left;}
+#changeAccessRights-visible input[type="text"]{width: 250px; height: 25px;}

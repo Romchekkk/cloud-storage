@@ -57,7 +57,7 @@
                             <tbody>
                                 <tr>
                                     <td>
-                                        <input id="search" type="text" onkeyup="search()" />
+                                        <input id="search" placeholder="Введите имя пользователя" type="text" onkeyup="search()" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -79,6 +79,18 @@
             <p>Измениние прав доступа к<br /><span id="filename"></span></p><br />
             <p>Текущий режим доступа:<br /><span id="fileAccessMod">Частный(Доступ есть только у вас)</span></p><br />
             <input type="button" id="firstVar" onclick="changeMod(this.value, false)" /><input type="button" id="secondVar" onclick="changeMod(this.value, false)" />
+            <table id="usersList-accessRights-hide">
+                <tbody>
+                    <tr>
+                        <td>
+                            <input id="search-accessRights" placeholder="Введите имя пользователя" type="text" onkeyup="searchAccessRights(false)" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="usersList-accessRights"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </body>
 </html>
