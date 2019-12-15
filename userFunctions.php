@@ -143,7 +143,7 @@ function uploadFile(&$mysql, $path){
     }
     elseif (move_uploaded_file($_FILES['file']['tmp_name'], $filePath)) {
         $mysql->addToAccessrights($filePath, $_SESSION['username']);
-        newAvailableSpace($size, "+", $_SESSION['username'], $mysql);
+        newAvailableSpace($size, "-", $_SESSION['username'], $mysql);
         return true;
     }
     return false;
@@ -191,7 +191,7 @@ function deleteFile(&$mysql, $path, $fileName){
     $size = filesize($file);
     if (unlink($file)){
         $mysql->removeFromAccessrights($file);
-        newAvailableSpace($size, "-", $_SESSION['username'], $mysql);
+        newAvailableSpace($size, "+", $_SESSION['username'], $mysql);
         return true;
     }
     return false;
