@@ -7,7 +7,8 @@
 actor: AcceptanceTester
 modules:  
     enabled:
-        - PhpBrowser:
-            url: http://*/cloud-storage
+        - WebDriver:
+            url: http://jo.jo/cloud-storage
+            browser: chrome
         - \Helper\Acceptance   
     step_decorators: ~        

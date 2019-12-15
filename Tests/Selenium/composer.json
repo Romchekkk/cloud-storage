@@ -1,0 +1,5 @@
+{
+    "require-dev": {
+        "se/selenium-server-standalone": "3.8.1"
+    }
+}
