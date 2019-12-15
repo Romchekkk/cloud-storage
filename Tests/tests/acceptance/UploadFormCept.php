@@ -13,19 +13,19 @@ $place = 104857600;
 $I->see("Доступно места: $place байт");
 
 //файла не было в хранилище
-if (!file_exists('C:\Users\ТНГ-ЛЕНГИС\Desktop\OSPanel\domains\jo.jo\cloud-storage\localStorage\nukce\images.png')) {
+if (!file_exists('C:\Open_Server\OSPanel\domains\c.s\cloud-storage\localStorage\nukce\images.png')) {
     $I->attachFile('//input[@type="file"]', 'images.png');
     $I->click('//input[@value="Загрузить файл"]'); //загружаем файл
 
     //количество доступного места изменилось
-    $place -= filesize('C:/Users/ТНГ-ЛЕНГИС/Desktop/OSPanel/domains/jo.jo/cloud-storage/Tests/tests/_data/images.png');
+    $place -= filesize('C:\Open_Server/OSPanel/domains/c.s/cloud-storage/Tests/tests/_data/images.png');
 
-    $I->wait(5);
+    $I->wait(1);
     $I->see("Доступно места: $place байт");
 
     //файл появился в хранилище
-    if (file_exists('C:\Users\ТНГ-ЛЕНГИС\Desktop\OSPanel\domains\jo.jo\cloud-storage\localStorage\nukce\images.png')) {
-        unlink('C:\Users\ТНГ-ЛЕНГИС\Desktop\OSPanel\domains\jo.jo\cloud-storage\localStorage\nukce\images.png');
+    if (file_exists('C:\Open_Server\OSPanel\domains\c.s\cloud-storage\localStorage\nukce\images.png')) {
+        unlink('C:\Open_Server\OSPanel\domains\c.s\cloud-storage\localStorage\nukce\images.png');
     }
 
     else {

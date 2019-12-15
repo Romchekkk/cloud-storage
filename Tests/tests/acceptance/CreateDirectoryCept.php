@@ -15,5 +15,5 @@ $I->click('//input[@value="Создать директорию"]');
 sleep(2);
 //папка появилась в бд 
 $I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce/Test_Folder', 'owner' => 'nukce')); 
-rmdir('C:\Users\ТНГ-ЛЕНГИС\Desktop\OSPanel\domains\jo.jo\cloud-storage\localStorage\nukce\Test_Folder');
+rmdir('C:\Open_Server\OSPanel\domains\c.s\cloud-storage\localStorage\nukce\Test_Folder');
 
