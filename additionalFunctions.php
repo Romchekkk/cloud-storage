@@ -30,12 +30,12 @@ function newWindow(&$mysql, $path, $username){
                                     <input class=\"changeMod\" type=\"button\" value=\"&nbsp;\" onclick=\"show('".preg_replace("/'/uis", "\'", $nameFile)."', false)\" />
                                     <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                                 </div>
-                            <img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />$nameFile
+                            <img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" title=\"$nameFile\" />$nameFile
                         </div>";
             }
             elseif($accessRights === 1 || $accessRights === 2){
                 $htmldir .= "<div class=\"directory\">
-                <img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" />$nameFile
+                <img src=\"images/dir.png\" onclick=\"changeDirectory('".preg_replace("/'/uis", "\'", $nameFile)."')\" title=\"$nameFile\" />$nameFile
                 </div>";
             }
         }
@@ -49,7 +49,7 @@ function newWindow(&$mysql, $path, $username){
                                     <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                                     <input class=\"delete\" type=\"button\" value=\"&nbsp;\" onclick=\"deleteFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                                 </div>
-                            <img src=\"images/file.png\" />$nameFile
+                            <img src=\"images/file.png\" title=\"$nameFile\" />$nameFile
                         </div>";
             }
             elseif($accessRights === 1 || $accessRights === 2){
@@ -57,7 +57,7 @@ function newWindow(&$mysql, $path, $username){
                                 <div class=\"hide\">
                                     <input class=\"download\" type=\"button\" value=\"&nbsp;\" onclick=\"downloadFile('".preg_replace("/'/uis", "\'", $nameFile)."')\" />
                                 </div>
-                                <img src=\"images/file.png\" />$nameFile
+                                <img src=\"images/file.png\" title=\"$nameFile\" />$nameFile
                             </div>";
             }
         }

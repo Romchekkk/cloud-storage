@@ -41,9 +41,9 @@ img{width: 100px; height: 100px;}
 
 /*Файловая система пользователя*/
 #window-bottom{height: 100%; border: 1px solid black; vertical-align: top;}
-.directory{width: 100px; height: 100px; padding: 50px; float: left; position: relative;}
+.directory{width: 100px; height: 100px; padding: 50px; float: left; position: relative; overflow: hidden;}
 .directory img{cursor: pointer;}
-.file{width: 100px; height: 100px; padding: 50px; float: left; position: relative;}
+.file{width: 100px; height: 100px; padding: 50px; float: left; position: relative; overflow: hidden;}
 .hide{display: none;; position: absolute; top: 20px; right: 0px;}
 div:hover .hide{display: block;}
 .changeMod{background-image: url("../images/changeMod.png"); background-repeat: no-repeat; background-size: 100%; border: none; width: 20px; height: 20px;}

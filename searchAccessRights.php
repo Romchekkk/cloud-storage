@@ -40,8 +40,12 @@ $isRoot = $isRoot ? "true" : "false";
 $usersList = "<table><tbody>";
 $usersArr = $mysql->getUsersForSearch($forSearch);
 $sharedaccess = $mysql->getFileAccessInfo($file)['sharedaccess'];
+$userId = $mysql->getUserId($_SESSION['username']);
 foreach($usersArr as $user){
     $id = $mysql->getUserId($user['username']);
+    if ($userId == $id){
+        continue;
+    }
     if (preg_match("/\/$id\//", $sharedaccess)){
         $usersList .= "<tr><td><input type=\"checkbox\" checked=\"checked\" value=\"".$user['username']."\" onclick=\"check(this.value, $isRoot)\" /></td><td><span>".$user['username']."</span></td></tr>\n";
     }
