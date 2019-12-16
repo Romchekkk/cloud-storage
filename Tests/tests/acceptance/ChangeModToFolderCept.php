@@ -11,6 +11,7 @@ $I->click('//input[@value="Создать директорию"]');
 $I->wait(0.1);
 $I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce/NewFolder', 'owner' => 'nukce','accessmod' => 0)); 
 $I->moveMouseOver(['css' => 'div.directory']);
+$I->wait(0.3);
 $I->click('.changeMod');
 $I->click('#secondVar');
 $I->wait(0.1);

@@ -17,7 +17,8 @@ sleep(2);
 $I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce/Test_Folder', 'owner' => 'nukce')); 
 $I->moveMouseOver(['css' => 'div.directory']);
 $I->click('.delete');
+$I->wait(1);
 if (file_exists('..\localstorage\nukce\Test_Folder'))
-    $I->dontSee("Test_Folder");
+    $I->see("ERRORHAVE");
 else 
-    $I->see("Test_Folder");
+    $I->see('nukce');
