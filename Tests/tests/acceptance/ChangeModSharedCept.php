@@ -24,4 +24,4 @@ $I->click('#secondVar');
 $I->click('#closeChangeAccessRights');
 $I->wait(0.3);
 $I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce', 'owner' => 'nukce', 'accessmod' => 2, 'sharedaccess' => 1));
-rmdir('C:\Open_Server\OSPanel\domains\c.s\cloud-storage\localStorage\friend');
+rmdir('..\localStorage\friend');

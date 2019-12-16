@@ -15,4 +15,4 @@ $I->fillField('#search','Pudge');
 $I->see("Pudge");
 $I->fillField('#search','NothingUser');
 $I->dontSee("NothingUser");
-rmdir('C:\Open_Server\OSPanel\domains\c.s\cloud-storage\localStorage\Pudge');
+rmdir('..\localStorage\Pudge');

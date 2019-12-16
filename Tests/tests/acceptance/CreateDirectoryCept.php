@@ -1,6 +1,6 @@
 <?php 
 $I = new AcceptanceTester($scenario);
-$I->wantTo('create a new directory');
+$I->wantTo('create a new directory and deleted');
 $I->amOnPage('/'); //начинаем с главной страницы
 $I->click('#auth');
 $I->fillField('input[name=email]','nukce@mail.ru');
@@ -15,5 +15,9 @@ $I->click('//input[@value="Создать директорию"]');
 sleep(2);
 //папка появилась в бд 
 $I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce/Test_Folder', 'owner' => 'nukce')); 
-rmdir('C:\Open_Server\OSPanel\domains\c.s\cloud-storage\localStorage\nukce\Test_Folder');
-
+$I->moveMouseOver(['css' => 'div.directory']);
+$I->click('.delete');
+if (file_exists('..\localstorage\nukce\Test_Folder'))
+    $I->dontSee("Test_Folder");
+else 
+    $I->see("Test_Folder");

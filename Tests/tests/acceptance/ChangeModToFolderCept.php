@@ -1,0 +1,21 @@
+<?php 
+$I = new AcceptanceTester($scenario);
+$I->wantTo('create new folder and change mod of this folder to All and back( to Exclusive)');
+$I->amOnPage('/');
+$I->click('#auth');
+$I->fillField('input[name=email]','nukce@mail.ru');
+$I->fillField('input[name=password]','123');
+$I->click('#regAuth');
+$I->fillField('input[id=dirName]','NewFolder');
+$I->click('//input[@value="Создать директорию"]');
+$I->wait(0.1);
+$I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce/NewFolder', 'owner' => 'nukce','accessmod' => 0)); 
+$I->moveMouseOver(['css' => 'div.directory']);
+$I->click('.changeMod');
+$I->click('#secondVar');
+$I->wait(0.1);
+$I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce/NewFolder', 'owner' => 'nukce','accessmod' => 2)); 
+$I->click('#firstVar');
+$I->wait(0.1);
+$I->seeInDatabase ('accessrights', array ('path' => 'localStorage/nukce/NewFolder', 'owner' => 'nukce','accessmod' => 0)); 
+rmdir('..\localStorage\nukce\NewFolder');
