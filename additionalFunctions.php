@@ -89,7 +89,7 @@ function removeDir($path, &$mysql){
         else {
             $size = filesize($file);
             if (unlink($file)) {
-                newAvailableSpace($size, "-", $_SESSION['username'], $mysql);
+                newAvailableSpace($size, "+", $_SESSION['username'], $mysql);
                 $mysql->removeFromAccessrights($file);
                 continue;
             }
