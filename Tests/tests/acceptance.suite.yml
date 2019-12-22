@@ -8,7 +8,7 @@ actor: AcceptanceTester
 modules:  
     enabled:
         - WebDriver:
-            url: http://c.s/cloud-storage
+            url: http://*/cloud-storage
             browser: chrome
         - \Helper\Acceptance   
     step_decorators: ~        

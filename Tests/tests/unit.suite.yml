@@ -8,5 +8,5 @@ modules:
         - Asserts
         - \Helper\Unit
         - PhpBrowser:
-            url: http://c.s/cloud-storage
+            url: http://*/cloud-storage
     step_decorators: ~        
